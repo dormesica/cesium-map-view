@@ -1,0 +1,140 @@
+import { areCoordiantesValid } from './utils/validation';
+import MapError from './utils/Error';
+import EventsHandler from './EventsHandler';
+
+/**
+ * @typedef {Object} Coordinates
+ * A set of geographic coordinates with an optional altitude value
+ * @property {number} lon the longiture
+ * @property {number} lat the latitude
+ * @property {number} [alt] the altitude
+ */
+
+/**
+ * @typedef {Object} Rectangle
+ * A geographic rectable where the north and south are latiture values and
+ * the east and west are longiture values
+ * @property {Coordinates} northWest
+ * @property {Coordinates} southEast
+ */
+
+/**
+ * Class that represents a map.
+ */
+export default class MapComponent {
+    /**
+     * Creates a new MapComponent instance inside the given container.
+     * @param {HTMLElement} container The element in which the map will be placed
+     * @param {number} [longClickDelay] Number of milliseconds until a click is defined as long click.
+     * @constructor
+     */
+    constructor(container, longClickDelay = 500) {
+        this._container = container;
+
+        this._initializeMap();
+        this._evetnsHandler = new EventsHandler(this, longClickDelay);
+    }
+
+    // public methods
+    // --------------
+
+    /**
+     * Positions the camera above the given position
+     * @param {Coordinates|Rectangle} coordinates
+     */
+    flyTo(location) {
+        const options = { duration: 1 };
+        const locationHasOwnProperty = Object.prototype.hasOwnProperty.bind(location);
+
+        if (['lon', 'lat'].every(locationHasOwnProperty) && areCoordiantesValid(location)) {
+            options.destination = Cesium.Cartesian3.fromDegrees(location.lon, location.lat, location.alt || 350);
+        } else if (
+            ['northWest', 'southEast'].every(locationHasOwnProperty) &&
+            Object.values(location).every(areCoordiantesValid)
+        ) {
+            options.destination = Cesium.Rectangle.fromDegrees(
+                location.northWest.lon,
+                location.southEast.lat,
+                location.southEast.lon,
+                location.northWest.lat
+            );
+        } else {
+            throw MapError.invalidArgumentError('location', 'MapComponent.flyTo');
+        }
+
+        this._viewer.camera.flyTo(options);
+    }
+
+    /**
+     * Tries to convert the given screen pixel to coordinates on the ellipsoid.
+     * If fails return null.
+     * @param {Pixel} pixel The pixel on the screen.
+     * @returns {Coordinates|null} The set of Coordinates under the given pixel or null.
+     */
+    convertPixelToCoordinates(pixel) {
+        // TODO validate input
+
+        const cartesianPosition = this._viewer.camera.pickEllipsoid(pixel, this._viewer.scene.globe.ellipsoid);
+        if (!cartesianPosition) {
+            return null; // TODO should throw?
+        }
+
+        const geographicPosition = Cesium.Cartographic.fromCartesian(cartesianPosition);
+        return {
+            lon: Cesium.Math.toDegrees(geographicPosition.longitude),
+            lat: Cesium.Math.toDegrees(geographicPosition.latitude),
+            alt: geographicPosition.height,
+        };
+    }
+
+    // "private" helper methods
+    // ------------------------
+
+    /**
+     * Initializes the cesium instance.
+     */
+    _initializeMap() {
+        if (PRODUCTION) {
+            viewerOptions.imageryProvider = new Cesium.UrlTemplateImageryProvider({
+                url: '.',
+                maximumLevel: 0,
+            });
+        }
+
+        this._viewer = new Cesium.Viewer(this._container, viewerOptions);
+
+        // remove the cesium button from the viewer window
+        const cesiumViewerElement = this._container.getElementsByClassName('cesium-viewer')[0];
+        const cesiumLogo = cesiumViewerElement.getElementsByClassName('cesium-viewer-bottom')[0];
+        const cesiumToolbar = cesiumViewerElement.getElementsByClassName('cesium-viewer-toolbar')[0];
+        cesiumViewerElement.removeChild(cesiumLogo);
+        cesiumViewerElement.removeChild(cesiumToolbar);
+    }
+}
+
+const viewerOptions = {
+    // cesium widgets
+    animation: false,
+    baseLayerPicker: false,
+    fullscreenButton: false,
+    geocoder: false,
+    homeButton: false,
+    infoBox: false,
+    sceneModePicker: false,
+    selectionIndicator: false,
+    timeline: false,
+    navigationHelpButton: false,
+
+    // performance
+    requestRenderMode: false,
+    maximumRenderTimeChange: Infinity,
+    contextOptions: {
+        alpha: false,
+        depth: true,
+        stencil: false,
+        antialias: false,
+        premultipliedAlpha: true,
+        preserveDrawingBuffer: false,
+        failIfMajorPerformanceCaveat: false,
+    },
+};
