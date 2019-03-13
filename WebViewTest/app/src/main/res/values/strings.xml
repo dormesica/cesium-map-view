@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">WebViewTest</string>
+    <string name="title_activity_some">SomeActivity</string>
+</resources>
