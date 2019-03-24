@@ -161,7 +161,12 @@ class CesiumMapView(context: Context, attrs: AttributeSet) : FrameLayout(context
 }
 
 /**
- * @param [listener]
+ * Extension method. Meant to support Kotlin's function syntax.
+ *
+ * Registers a callback to be invoked when the map is ready and can be interacted with.
+ *
+ * @see CesiumMapView.setOnMapReadyListener
+ * @param [listener] The callback that will run.
  * @receiver CesiumMapView
  * @since 1.0.0
  */
@@ -171,7 +176,14 @@ fun CesiumMapView.setOnMapReadyListener(listener: (CesiumMapView) -> Unit) =
     })
 
 /**
- * @param [listener]
+ * Extension method. Meant to support Kotlin's function syntax.
+ *
+ * Registers a callback to be invoked when a location on the map is clicked.
+ * <strong>Note:</strong> This callback will not be invoked if the clicked location cannot be associated with a set of
+ * coordinates (e.g. a clicked performed on space).
+ *
+ * @see CesiumMapView.setOnMapClickListener
+ * @param [listener] The callback that will run.
  * @receiver CesiumMapView
  * @since 1.0.0
  */
@@ -181,7 +193,14 @@ fun CesiumMapView.setOnMapClickListener(listener: (CesiumMapView, MapClickEvent)
     })
 
 /**
- * @param [listener]
+ * Extension method. Meant to support Kotlin's function syntax.
+ *
+ * Registers a callback to be invoked when a location on the map is clicked and held.
+ * <strong>Note:</strong> This callback will not be invoked if the clicked location cannot be associated with a set of
+ * coordinates (e.g. a clicked performed on space).
+ *
+ * @see CesiumMapView.setOnMapLongClickListener
+ * @param [listener] The callback that will run.
  * @receiver CesiumMapView
  * @since 1.0.0
  */
