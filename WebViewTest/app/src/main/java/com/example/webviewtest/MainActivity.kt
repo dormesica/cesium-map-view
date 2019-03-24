@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.widget.TextView
 import android.widget.Toast
+import com.example.location.Coordinates
+import com.example.location.Rectangle
 import com.example.mapcontroller.CesiumMapView
 import com.example.mapcontroller.event.MapClickEvent
 
@@ -24,9 +26,11 @@ class MainActivity : AppCompatActivity() {
         }
         cesiumMapView.setOnMapClickListener { map: CesiumMapView, data: MapClickEvent ->
             eventsDisplay.text = getString(R.string.click_event_text, data.location.toString())
+            map.flyTo(data.location)
         }
         cesiumMapView.setOnMapLongClickListener { map: CesiumMapView, data: MapClickEvent ->
             eventsDisplay.text = getString(R.string.long_click_event_text, data.location.toString())
+            map.flyTo(Rectangle(Coordinates(180.0, 90.0), Coordinates(0.0, 0.0)))
         }
     }
 }
