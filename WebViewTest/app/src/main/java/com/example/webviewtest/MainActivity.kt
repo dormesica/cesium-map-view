@@ -2,10 +2,14 @@ package com.example.webviewtest
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
+import android.webkit.WebView
+import android.widget.TextView
 import android.widget.Toast
 import com.example.mapcontroller.CesiumMapView
-import com.example.mapcontroller.event.OnMapReadyListener
+import com.example.mapcontroller.event.MapClickEvent
+import com.example.mapcontroller.setOnMapClickListener
+import com.example.mapcontroller.setOnMapLongClickListener
+import com.example.mapcontroller.setOnMapReadyListener
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,11 +17,19 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        WebView.setWebContentsDebuggingEnabled(true)
+
         val cesiumMapView: CesiumMapView = findViewById(R.id.cesium_map_view)
-        cesiumMapView.setOnMapReadyListener(object: OnMapReadyListener {
-            override fun onMapReady(map: CesiumMapView) {
-                Toast.makeText(this@MainActivity, "Map Ready", Toast.LENGTH_SHORT).show()
-            }
-        })
+        val eventsDisplay: TextView = findViewById(R.id.event_display)
+
+        cesiumMapView.setOnMapReadyListener {
+            Toast.makeText(this, "Map Ready", Toast.LENGTH_SHORT).show()
+        }
+        cesiumMapView.setOnMapClickListener { map: CesiumMapView, data: MapClickEvent ->
+            eventsDisplay.text = getString(R.string.click_event_text, data.location.toString())
+        }
+        cesiumMapView.setOnMapLongClickListener { map: CesiumMapView, data: MapClickEvent ->
+            eventsDisplay.text = getString(R.string.long_click_event_text, data.location.toString())
+        }
     }
 }

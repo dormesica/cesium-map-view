@@ -32,11 +32,27 @@ export default class MapComponent {
         this._container = container;
 
         this._initializeMap();
-        this._evetnsHandler = new EventsHandler(this, longClickDelay);
+        this._eventsHandler = new EventsHandler(this, longClickDelay);
     }
 
     // public methods
     // --------------
+
+    /**
+     * Gets the amount of milliseconds required for a click to become a long-click
+     * @returns {number} The long click delay in milliseconds
+     */
+    get longClickDelay() {
+        return this._eventsHandler.longClickDelay;
+    }
+
+    /**
+     * Sets the amount of milliseconds for a click to become a long-click.
+     * @param {number} longClickDelay New delay for long click in milliseconds
+     */
+    set longClickDelay(longClickDelay) {
+        this._eventsHandler.longClickDelay = longClickDelay;
+    }
 
     /**
      * Positions the camera above the given position

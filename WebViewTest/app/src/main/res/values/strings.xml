@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">WebViewTest</string>
     <string name="title_activity_some">SomeActivity</string>
+
+    <string name="click_event_text">Click at: %1$s!</string>
+    <string name="long_click_event_text">Long click at: %1$s!</string>
 </resources>

@@ -1,5 +1,4 @@
 import { zip, upperCase } from 'lodash';
-import MapComponent from './MapComponent';
 
 /**
  * @typedef {Object} Pixel
@@ -17,7 +16,7 @@ export default class EventsHandler {
     // --------------------
     // In order to determine if a click is in fact a long-click, the following mechanism is used:
     // An instance of EventsHandler contains a property: _lastLeftDownTimeStamp that stores the time stamp of
-    // the last LEFT_DOWN event. 
+    // the last LEFT_DOWN event.
     // When a click event is fired its handler calculates the duration of the press
     // by subtracting _lastLeftDownTimeStamp from the value of the current time stamp.
     // Since LEFT_DOWN event is the first event in any interation of the user with the map there is no need
@@ -45,7 +44,7 @@ export default class EventsHandler {
     }
 
     /**
-     * handles LEFT_DOWN cesium events
+     * Handles LEFT_DOWN cesium events
      */
     handleLeftDown() {
         this._lastLeftDownTimeStamp = new Date().getTime();
@@ -54,36 +53,37 @@ export default class EventsHandler {
     }
 
     /**
-     * handles LEFT_CLICK cesium events
+     * Handles LEFT_CLICK cesium events
      * @param {Object} eventData The data received from the event.
      * @param {Pixel} eventData.position
      */
     handleLeftClick({ position }) {
-        const coordinates = this._mapComponent.convertPixelToCoordinates(position);
-        if (!coordinates) {
-            // TODO throw error seems harsh?
+        const location = this._mapComponent.convertPixelToCoordinates(position);
+        if (!location) {
             return;
         }
 
-        const pressLength = (new Date().getTime()) - this._lastLeftDownTimeStamp;
+        const data = JSON.stringify({
+            location,
+        });
+
+        const pressLength = new Date().getTime() - this._lastLeftDownTimeStamp;
         if (pressLength >= this.longClickDelay) {
-            // TODO long-click event
-            EventsEmitter.fireLongClick({ coordinates: coordinates });
+            EventsEmitter.fireOnLongClick(data);
         } else {
-            // TODO click event
-            EventsEmitter.fireClick({ coordinates: coordinates });
+            EventsEmitter.fireOnClick(data);
         }
     }
 
     /**
-     * handles LEFT_UP cesium events
+     * Handles LEFT_UP cesium events
      */
     handleLeftUp() {
         // TODO touch event
     }
 
     /**
-     * handles MOUSE_MOVE cesium events
+     * Handles MOUSE_MOVE cesium events
      * @param {Object} eventData The data received from the event.
      * @param {Pixel} eventData.startPosition The pixel at the beginning of the movement.
      * @param {Pixel} eventData.endPosition The pixele at the end of the movement.
@@ -94,11 +94,6 @@ export default class EventsHandler {
 
     _registerListeners() {
         const events = ['LeftDown', 'LeftClick', 'LeftUp', 'MouseMove'];
-
-        // Object.entries(Cesium.ScreenSpaceEventType).forEach(([key, val]) => {
-        //     if (key === 'MOUSE_MOVE') return;
-        //     this._viewer.screenSpaceEventHandler.setInputAction(() => console.log(key), val)
-        // });
 
         zip(
             events
