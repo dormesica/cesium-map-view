@@ -6,6 +6,13 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/event_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        tools:text="test" />
+
     <com.example.mapcontroller.CesiumMapView
         android:id="@+id/cesium_map_view"
         android:layout_width="match_parent"
@@ -13,11 +20,11 @@
         android:layout_weight="1"
         android:baselineAligned="false" />
 
-    <TextView
-        android:id="@+id/event_display"
+    <Button
+        android:id="@+id/extent_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        tools:text="test" />
+        android:text="@string/button_text"/>
 
 </LinearLayout>

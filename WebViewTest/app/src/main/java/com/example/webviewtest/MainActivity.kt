@@ -2,7 +2,9 @@ package com.example.webviewtest
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.webkit.ValueCallback
 import android.webkit.WebView
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.example.location.Coordinates
@@ -32,5 +34,15 @@ class MainActivity : AppCompatActivity() {
             eventsDisplay.text = getString(R.string.long_click_event_text, data.location.toString())
             map.flyTo(Rectangle(Coordinates(180.0, 90.0), Coordinates(0.0, 0.0)))
         }
+
+        val button: Button = findViewById(R.id.extent_button)
+        button.setOnClickListener {
+            cesiumMapView.getViewExtent(object : ValueCallback<Rectangle> {
+                override fun onReceiveValue(value: Rectangle?) {
+                    eventsDisplay.text = value.toString()
+                }
+            })
+        }
+
     }
 }

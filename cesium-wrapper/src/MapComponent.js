@@ -1,5 +1,6 @@
 import { areCoordiantesValid } from './utils/validation';
 import MapError from './utils/Error';
+import { convertRadiansToDegrees } from './utils/math';
 import EventsHandler from './EventsHandler';
 
 /**
@@ -14,8 +15,8 @@ import EventsHandler from './EventsHandler';
  * @typedef {Object} Rectangle
  * A geographic rectable where the north and south are latiture values and
  * the east and west are longiture values
- * @property {Coordinates} northWest
- * @property {Coordinates} southEast
+ * @property {Coordinates} northWest The north-west corner.
+ * @property {Coordinates} southEast The south-east corner.
  */
 
 /**
@@ -79,6 +80,27 @@ export default class MapComponent {
         }
 
         this._viewer.camera.flyTo(options);
+    }
+
+    /**
+     * Returns the extent of the current view.
+     * @returns {Rectangle} 
+     */
+    getViewExtent() {
+        const cesiumExtent = this._viewer.camera.computeViewRectangle();
+
+        const extent = {
+            northWest: {
+                lon: convertRadiansToDegrees(cesiumExtent.west),
+                lat: convertRadiansToDegrees(cesiumExtent.north),
+            },
+            southEast: {
+                lon: convertRadiansToDegrees(cesiumExtent.east),
+                lat: convertRadiansToDegrees(cesiumExtent.south),
+            }
+        };
+
+        return extent;
     }
 
     /**
