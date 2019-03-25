@@ -7,9 +7,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.mapcontroller.CesiumMapView
 import com.example.mapcontroller.event.MapClickEvent
-import com.example.mapcontroller.setOnMapClickListener
-import com.example.mapcontroller.setOnMapLongClickListener
-import com.example.mapcontroller.setOnMapReadyListener
 
 class MainActivity : AppCompatActivity() {
 
