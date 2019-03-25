@@ -9,6 +9,14 @@ import com.example.location.Coordinates;
  */
 public class MapClickEvent {
 
-    public Coordinates location;
+    private Coordinates location;
 
+    /**
+     * Returns the location at which the click event occurred.
+     *
+     * @return The coordinates of the click event.
+     */
+    public Coordinates getLocation() {
+        return location;
+    }
 }

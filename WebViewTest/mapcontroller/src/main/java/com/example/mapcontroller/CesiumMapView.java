@@ -50,8 +50,8 @@ public class CesiumMapView extends FrameLayout {
     /**
      * Creates a new <code>CesiumMapView</code> instance.
      *
-     * @param context an Activity Context to access application assets
-     * @param attrs   an AttributeSet passed to our parent
+     * @param context An Activity Context to access application assets
+     * @param attrs   An AttributeSet passed to our parent
      */
     public CesiumMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -132,38 +132,23 @@ public class CesiumMapView extends FrameLayout {
 
             mIsInitialized = true;
 
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mOnMapReadyListener.onMapReady(CesiumMapView.this);
-                }
-            });
+            mHandler.post(() -> mOnMapReadyListener.onMapReady(CesiumMapView.this));
         }
 
         @JavascriptInterface
         public void fireOnClick(final String jsonDataString) {
             Log.d(TAG_MAP_VIEW_EVENT, "CLICK");
 
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mOnMapClickListener.onMapClick(
-                            CesiumMapView.this, mGson.fromJson(jsonDataString, MapClickEvent.class));
-                }
-            });
+            mHandler.post(() -> mOnMapClickListener.onMapClick(
+                    CesiumMapView.this, mGson.fromJson(jsonDataString, MapClickEvent.class)));
         }
 
         @JavascriptInterface
         public void fireOnLongClick(final String jsonDataString) {
             Log.d(TAG_MAP_VIEW_EVENT, "LONG_CLICK");
 
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mOnMapLongClickListener.onMapLongClick(
-                            CesiumMapView.this, mGson.fromJson(jsonDataString, MapClickEvent.class));
-                }
-            });
+            mHandler.post(() -> mOnMapLongClickListener.onMapLongClick(
+                    CesiumMapView.this, mGson.fromJson(jsonDataString, MapClickEvent.class)));
         }
     }
 }
