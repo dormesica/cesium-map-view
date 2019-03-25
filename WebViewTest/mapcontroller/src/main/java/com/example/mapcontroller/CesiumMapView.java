@@ -6,9 +6,12 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import com.example.location.Coordinates;
+import com.example.location.Rectangle;
 import com.example.mapcontroller.event.MapClickEvent;
 import com.example.mapcontroller.event.OnMapClickListener;
 import com.example.mapcontroller.event.OnMapLongClickListener;
@@ -29,9 +32,12 @@ import com.google.gson.Gson;
  */
 public class CesiumMapView extends FrameLayout {
 
+    /** The name of the events emitter interface in the JavaScript context. */
     private static final String JS_INTERFACE_EVENTS_EMITTER = "EventsEmitter";
+    /** The name of the map component in the JavaScript context. */
     private static final String JS_MAP_NAME = "mapComponent";
 
+    /** Tag for events log from JavaScript. */
     private static final String TAG_MAP_VIEW_EVENT = "CesiumMapView.Event";
 
     // properties
@@ -111,6 +117,39 @@ public class CesiumMapView extends FrameLayout {
     }
 
     /**
+     * Focuses the view on the given coordinates.
+     * <p>
+     * If height is not provided in the given <code>location</code>, the altitude is set to 350m.
+     *
+     * @param location The coordinates on which to focus.
+     */
+    public void flyTo(Coordinates location) {
+        mWebView.evaluateJavascript(createFlyToScript(location), null);
+    }
+
+    /**
+     * Focuses the view on the given extent.
+     *
+     * @param extent The extent on which to focus
+     */
+    public void flyTo(Rectangle extent) {
+        mWebView.evaluateJavascript(createFlyToScript(extent), null);
+    }
+
+    /**
+     * Asynchronously evaluates the extent of the current view. <code>callback</code> will be invoked
+     * with a <code>Rectangle</code> that represents the current extent.
+     *
+     * @param callback Called when the evaluation completes.
+     */
+    public void getViewExtent(ValueCallback<Rectangle> callback) {
+        String script = String.format("%s.getViewExtent();", JS_MAP_NAME);
+
+        mWebView.evaluateJavascript(script,
+                (String result) -> callback.onReceiveValue(mGson.fromJson(result, Rectangle.class)));
+    }
+
+    /**
      * Sets up the configuration of the WebView and initializes the Cesium map.
      */
     @SuppressLint("SetJavaScriptEnabled")
@@ -125,6 +164,20 @@ public class CesiumMapView extends FrameLayout {
         mWebView.loadUrl("file:///android_asset/index.html");
     }
 
+    /**
+     * Generates the JavaScript code that activates the flyTo function on the cesium view.
+     *
+     * @param location The location on which to focus.
+     * @return The JavaScript code that focuses on <code>location</code>.
+     */
+    private String createFlyToScript(Object location) {
+        return String.format("%s.flyTo(%s);", JS_MAP_NAME, mGson.toJson(location));
+    }
+
+    /**
+     * Inner class used as a bridge between JavaScript and Android.
+     * Contains the logic that should be executed when receiving an event from the JavaScript map.
+     */
     private class EventsEmitter {
         @JavascriptInterface
         public void fireOnMapReady() {

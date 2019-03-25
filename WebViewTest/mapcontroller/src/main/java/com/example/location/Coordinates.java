@@ -1,5 +1,7 @@
 package com.example.location;
 
+import android.support.annotation.NonNull;
+
 /**
  * Representation of a geographic location.
  *
@@ -67,5 +69,11 @@ public class Coordinates {
      */
     public double getAlt() {
         return alt;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return String.format("Coordinates(%s, %s, %s)", lon, lat, lat);
     }
 }
