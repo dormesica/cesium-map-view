@@ -1,6 +1,7 @@
 package com.github.dormesica.location;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Representation of a geographic location.
@@ -69,6 +70,24 @@ public class Coordinates {
      */
     public double getAlt() {
         return alt;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return true;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Coordinates other = (Coordinates) obj;
+        return lon == other.lon && lat == other.lat && alt == other.alt;
     }
 
     @NonNull
