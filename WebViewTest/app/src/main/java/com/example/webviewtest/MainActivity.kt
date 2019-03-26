@@ -1,6 +1,6 @@
 package com.example.webviewtest
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 import android.widget.Button
@@ -27,11 +27,11 @@ class MainActivity : AppCompatActivity() {
         }
         cesiumMapView.setOnMapClickListener { map: CesiumMapView, data: MapClickEvent ->
             eventsDisplay.text = getString(R.string.click_event_text, data.location.toString())
-            map.flyTo(data.location)
+            map.focusOn(data.location)
         }
         cesiumMapView.setOnMapLongClickListener { map: CesiumMapView, data: MapClickEvent ->
             eventsDisplay.text = getString(R.string.long_click_event_text, data.location.toString())
-            map.flyTo(Rectangle(Coordinates(180.0, 90.0), Coordinates(0.0, 0.0)))
+            map.focusOn(Rectangle(Coordinates(180.0, 90.0), Coordinates(0.0, 0.0)))
         }
 
         val button: Button = findViewById(R.id.extent_button)

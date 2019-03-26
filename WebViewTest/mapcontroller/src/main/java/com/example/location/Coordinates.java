@@ -1,6 +1,6 @@
 package com.example.location;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Representation of a geographic location.

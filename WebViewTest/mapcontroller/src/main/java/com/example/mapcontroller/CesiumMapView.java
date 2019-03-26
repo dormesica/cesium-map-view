@@ -123,8 +123,8 @@ public class CesiumMapView extends FrameLayout {
      *
      * @param location The coordinates on which to focus.
      */
-    public void flyTo(Coordinates location) {
-        mWebView.evaluateJavascript(createFlyToScript(location), null);
+    public void focusOn(Coordinates location) {
+        mWebView.evaluateJavascript(createFocusScript(location), null);
     }
 
     /**
@@ -132,8 +132,8 @@ public class CesiumMapView extends FrameLayout {
      *
      * @param extent The extent on which to focus
      */
-    public void flyTo(Rectangle extent) {
-        mWebView.evaluateJavascript(createFlyToScript(extent), null);
+    public void focusOn(Rectangle extent) {
+        mWebView.evaluateJavascript(createFocusScript(extent), null);
     }
 
     /**
@@ -165,13 +165,13 @@ public class CesiumMapView extends FrameLayout {
     }
 
     /**
-     * Generates the JavaScript code that activates the flyTo function on the cesium view.
+     * Generates the JavaScript code that activates the focusOn function on the cesium view.
      *
      * @param location The location on which to focus.
      * @return The JavaScript code that focuses on <code>location</code>.
      */
-    private String createFlyToScript(Object location) {
-        return String.format("%s.flyTo(%s);", JS_MAP_NAME, mGson.toJson(location));
+    private String createFocusScript(Object location) {
+        return String.format("%s.focusOn(%s);", JS_MAP_NAME, mGson.toJson(location));
     }
 
     /**

@@ -57,9 +57,9 @@ export default class MapComponent {
 
     /**
      * Positions the camera above the given position
-     * @param {Coordinates|Rectangle} coordinates
+     * @param {Coordinates|Rectangle} location The location on which to focus
      */
-    flyTo(location) {
+    focusOn(location) {
         const options = { duration: 1 };
         const locationHasOwnProperty = Object.prototype.hasOwnProperty.bind(location);
 
