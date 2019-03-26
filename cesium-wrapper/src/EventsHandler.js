@@ -88,8 +88,19 @@ export default class EventsHandler {
      * @param {Pixel} eventData.startPosition The pixel at the beginning of the movement.
      * @param {Pixel} eventData.endPosition The pixele at the end of the movement.
      */
-    handleMouseMove(eventData) {
-        // TODO drag event
+    handleMouseMove({ startPosition, endPosition }) {
+        const startLocation = this._mapComponent.convertPixelToCoordinates(startPosition);
+        const endLocation = this._mapComponent.convertPixelToCoordinates(endPosition);
+        if (!startLocation || !endLocation) {
+            return;
+        }
+
+        const data = JSON.stringify({
+            startLocation,
+            endLocation,
+        });
+
+        EventsEmitter.fireOnDrag(data);
     }
 
     _registerListeners() {

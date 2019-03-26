@@ -16,5 +16,5 @@ public interface OnMapClickListener {
      * @param map The map that was clicked
      * @param clickEvent Additional data about the event.
      */
-    void onMapClick(CesiumMapView map, MapClickEvent clickEvent);
+    void onClick(CesiumMapView map, MapClickEvent clickEvent);
 }

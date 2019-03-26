@@ -16,5 +16,5 @@ public interface OnMapLongClickListener {
      * @param map The map that was clicked
      * @param clickEvent Additional data about the event.
      */
-    void onMapLongClick(CesiumMapView map, MapClickEvent clickEvent);
+    void onLongClick(CesiumMapView map, MapClickEvent clickEvent);
 }

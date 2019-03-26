@@ -12,10 +12,7 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import com.example.location.Coordinates;
 import com.example.location.Rectangle;
-import com.example.mapcontroller.event.MapClickEvent;
-import com.example.mapcontroller.event.OnMapClickListener;
-import com.example.mapcontroller.event.OnMapLongClickListener;
-import com.example.mapcontroller.event.OnMapReadyListener;
+import com.example.mapcontroller.event.*;
 import com.google.gson.Gson;
 
 /**
@@ -52,6 +49,7 @@ public class CesiumMapView extends FrameLayout {
     private OnMapReadyListener mOnMapReadyListener = null;
     private OnMapClickListener mOnMapClickListener = null;
     private OnMapLongClickListener mOnMapLongClickListener = null;
+    private OnMapDragListener mOnMapDragListener = null;
 
     /**
      * Creates a new <code>CesiumMapView</code> instance.
@@ -96,8 +94,8 @@ public class CesiumMapView extends FrameLayout {
 
     /**
      * Registers a callback to be invoked when a location on the map is clicked.
-     * <strong>Note:</strong> This callback will not be invoked if the clicked location cannot be associated with a set of
-     * coordinates (e.g. a clicked performed on space).
+     * <strong>Note:</strong> This callback will not be invoked if the clicked location cannot be associated with
+     * a set of coordinates (e.g. a clicked performed on space).
      *
      * @param listener The callback that will run.
      */
@@ -107,13 +105,27 @@ public class CesiumMapView extends FrameLayout {
 
     /**
      * Registers a callback to be invoked when a location on the map is clicked and held.
-     * <strong>Note:</strong> This callback will not be invoked if the clicked location cannot be associated with a set of
-     * coordinates (e.g. a clicked performed on space).
+     * <strong>Note:</strong> This callback will not be invoked if the clicked location cannot be associated with
+     * a set of coordinates (e.g. a clicked performed on space).
      *
      * @param listener The callback that will run.
      */
     public void setOnMapLongClickListener(OnMapLongClickListener listener) {
         mOnMapLongClickListener = listener;
+    }
+
+    /**
+     * Registers a callback to be invoked when the map is dragged.
+     * <p>
+     * <strong>Note:</strong> This callback will not be invoked if the drag occurred somewhere in space.
+     * <p>
+     * <strong>Note:</strong> This callback may be invoked several times during a single drag gesture (before the finger
+     * is lifted from the screen).
+     *
+     * @param listener The callback that will run.
+     */
+    public void setOnMapDragListener(OnMapDragListener listener) {
+        mOnMapDragListener = listener;
     }
 
     /**
@@ -191,22 +203,32 @@ public class CesiumMapView extends FrameLayout {
         }
 
         @JavascriptInterface
-        public void fireOnClick(final String jsonDataString) {
+        public void fireOnClick(final String eventDataString) {
             Log.d(TAG_MAP_VIEW_EVENT, "CLICK");
 
             if (mOnMapClickListener != null) {
-                mHandler.post(() -> mOnMapClickListener.onMapClick(
-                        CesiumMapView.this, mGson.fromJson(jsonDataString, MapClickEvent.class)));
+                mHandler.post(() -> mOnMapClickListener.onClick(
+                        CesiumMapView.this, mGson.fromJson(eventDataString, MapClickEvent.class)));
             }
         }
 
         @JavascriptInterface
-        public void fireOnLongClick(final String jsonDataString) {
+        public void fireOnLongClick(final String eventDataString) {
             Log.d(TAG_MAP_VIEW_EVENT, "LONG_CLICK");
 
             if (mOnMapLongClickListener != null) {
-                mHandler.post(() -> mOnMapLongClickListener.onMapLongClick(
-                        CesiumMapView.this, mGson.fromJson(jsonDataString, MapClickEvent.class)));
+                mHandler.post(() -> mOnMapLongClickListener.onLongClick(
+                        CesiumMapView.this, mGson.fromJson(eventDataString, MapClickEvent.class)));
+            }
+        }
+
+        @JavascriptInterface
+        public void fireOnDrag(final String eventDataString) {
+            Log.d(TAG_MAP_VIEW_EVENT, "DRAG");
+
+            if (mOnMapDragListener != null) {
+                mHandler.post(() -> mOnMapDragListener.onDrag(
+                        CesiumMapView.this, mGson.fromJson(eventDataString, MapDragEvent.class)));
             }
         }
     }
