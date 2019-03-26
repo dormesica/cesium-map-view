@@ -1,6 +1,6 @@
 package com.github.dormesica.mapcontroller.event;
 
-import com.github.dormesica.mapcontroller.CesiumMapView;
+import com.github.dormesica.mapcontroller.widgets.CesiumMapView;
 
 /**
  * Interface definition for a callback to be invoked when the map is ready to be interacted with.

@@ -1,6 +1,6 @@
 package com.github.dormesica.mapcontroller.event;
 
-import com.github.dormesica.location.Coordinates;
+import com.github.dormesica.mapcontroller.location.Coordinates;
 
 /**
  * Holds a bundle of data that is passed to a drag event callback function.

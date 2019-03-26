@@ -1,4 +1,4 @@
-package com.github.dormesica.location;
+package com.github.dormesica.mapcontroller.location;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
