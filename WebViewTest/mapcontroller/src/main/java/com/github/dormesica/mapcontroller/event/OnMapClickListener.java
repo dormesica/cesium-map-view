@@ -1,6 +1,6 @@
-package com.example.mapcontroller.event;
+package com.github.dormesica.mapcontroller.event;
 
-import com.example.mapcontroller.CesiumMapView;
+import com.github.dormesica.mapcontroller.CesiumMapView;
 
 /**
  * Interface definition for a callback to be invoked when a location on the map

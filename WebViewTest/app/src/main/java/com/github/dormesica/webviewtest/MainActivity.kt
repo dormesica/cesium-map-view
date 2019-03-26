@@ -1,4 +1,4 @@
-package com.example.webviewtest
+package com.github.dormesica.webviewtest
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,12 +6,12 @@ import android.webkit.WebView
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import com.example.location.Coordinates
-import com.example.location.Rectangle
-import com.example.mapcontroller.CesiumMapView
-import com.example.mapcontroller.event.MapClickEvent
-import com.example.mapcontroller.event.MapDragEvent
-import com.example.mapcontroller.event.MapTouchEvent
+import com.github.dormesica.location.Coordinates
+import com.github.dormesica.location.Rectangle
+import com.github.dormesica.mapcontroller.CesiumMapView
+import com.github.dormesica.mapcontroller.event.MapClickEvent
+import com.github.dormesica.mapcontroller.event.MapDragEvent
+import com.github.dormesica.mapcontroller.event.MapTouchEvent
 
 class MainActivity : AppCompatActivity() {
 

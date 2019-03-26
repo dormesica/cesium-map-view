@@ -1,4 +1,4 @@
-package com.example.mapcontroller;
+package com.github.dormesica.mapcontroller;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,9 +10,9 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-import com.example.location.Coordinates;
-import com.example.location.Rectangle;
-import com.example.mapcontroller.event.*;
+import com.github.dormesica.location.Coordinates;
+import com.github.dormesica.location.Rectangle;
+import com.github.dormesica.mapcontroller.event.*;
 import com.google.gson.Gson;
 
 /**

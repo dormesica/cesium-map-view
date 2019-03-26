@@ -1,4 +1,4 @@
-package com.example.location;
+package com.github.dormesica.location;
 
 import androidx.annotation.NonNull;
 
