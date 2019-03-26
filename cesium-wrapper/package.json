@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cesium": "^1.55.0",
     "lodash": "^4.17.11"
   },
   "devDependencies": {

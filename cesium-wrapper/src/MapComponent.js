@@ -25,15 +25,14 @@ import EventsHandler from './EventsHandler';
 export default class MapComponent {
     /**
      * Creates a new MapComponent instance inside the given container.
-     * @param {HTMLElement} container The element in which the map will be placed
-     * @param {number} [longClickDelay] Number of milliseconds until a click is defined as long click.
+     * @param {HTMLElement} container The element in which the map will be placed.
      * @constructor
      */
-    constructor(container, longClickDelay = 500) {
+    constructor(container) {
         this._container = container;
 
         this._initializeMap();
-        this._eventsHandler = new EventsHandler(this, longClickDelay);
+        this._eventsHandler = new EventsHandler(this, 500);
     }
 
     // public methods
@@ -84,7 +83,7 @@ export default class MapComponent {
 
     /**
      * Returns the extent of the current view.
-     * @returns {Rectangle} 
+     * @returns {Rectangle}
      */
     getViewExtent() {
         const cesiumExtent = this._viewer.camera.computeViewRectangle();
@@ -97,7 +96,7 @@ export default class MapComponent {
             southEast: {
                 lon: convertRadiansToDegrees(cesiumExtent.east),
                 lat: convertRadiansToDegrees(cesiumExtent.south),
-            }
+            },
         };
 
         return extent;
