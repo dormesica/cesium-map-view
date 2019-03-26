@@ -13,7 +13,7 @@ public class MapDragEvent {
     private Coordinates endLocation;
 
     /**
-     * Returns the start location of the drag gesture.
+     * Returns the geographic location where the gesture started.
      *
      * @return The start location of the drag.
      */
@@ -22,12 +22,11 @@ public class MapDragEvent {
     }
 
     /**
-     * Returns the end location of the drag gesture.
+     * Returns the geographic location where the gesture ended.
      *
      * @return The end location of the drag.
      */
     public Coordinates getEndLocation() {
         return endLocation;
     }
-
 }

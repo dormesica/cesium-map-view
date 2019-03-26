@@ -5,6 +5,7 @@
     <string name="click_event_text">Click at: %1$s!</string>
     <string name="long_click_event_text">Long click at: %1$s!</string>
     <string name="drag_event_text">Drag from: %1$s! to: %2$s!</string>
+    <string name="touch_event_text">Touch of type: %1$d! at: %2$s!</string>
 
     <string name="button_text">Evaluate extent</string>
 </resources>

@@ -11,6 +11,7 @@ import com.example.location.Rectangle
 import com.example.mapcontroller.CesiumMapView
 import com.example.mapcontroller.event.MapClickEvent
 import com.example.mapcontroller.event.MapDragEvent
+import com.example.mapcontroller.event.MapTouchEvent
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         cesiumMapView.setOnMapDragListener { map: CesiumMapView, data: MapDragEvent ->
             eventsDisplay.text = getString(R.string.drag_event_text,
                 data.startLocation.toString(), data.endLocation.toString())
+        }
+        cesiumMapView.setOnMapTouchListener { map: CesiumMapView, data: MapTouchEvent ->
+            eventsDisplay.text = getString(R.string.touch_event_text, data.type, data.location)
         }
 
         val button: Button = findViewById(R.id.extent_button)

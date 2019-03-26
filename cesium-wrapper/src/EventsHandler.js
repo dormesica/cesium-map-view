@@ -1,4 +1,5 @@
 import { zip, upperCase } from 'lodash';
+import { EventEmitter } from 'events';
 
 /**
  * @typedef {Object} Pixel
@@ -6,6 +7,14 @@ import { zip, upperCase } from 'lodash';
  * @property {number} i The i of the pixel.
  * @property {number} j The j of the pixel.
  */
+
+ /**
+  * 
+  */
+const touchType = Object.freeze({
+    DOWN: 0,
+    UP: 1, 
+});
 
 /**
  * A class that handles the conversion of cesium events to Android-like events.
@@ -45,11 +54,23 @@ export default class EventsHandler {
 
     /**
      * Handles LEFT_DOWN cesium events
+     * @param {Object} eventData The data received from the event.
+     * @param {Pixel} eventData.position
      */
-    handleLeftDown() {
+    handleLeftDown({ position }) {
         this._lastLeftDownTimeStamp = new Date().getTime();
 
-        // TODO touch event
+        const location = this._mapComponent.convertPixelToCoordinates(position);
+        if (!location) {
+            return;
+        }
+
+        const data = JSON.stringify({
+            location,
+            type: touchType.DOWN,
+        });
+
+        EventsEmitter.fireOnTouch(data);
     }
 
     /**
@@ -77,9 +98,21 @@ export default class EventsHandler {
 
     /**
      * Handles LEFT_UP cesium events
+     * @param {Object} eventData The data received from the event.
+     * @param {Pixel} eventData.position
      */
-    handleLeftUp() {
-        // TODO touch event
+    handleLeftUp({ position }) {
+        const location = this._mapComponent.convertPixelToCoordinates(position);
+        if (!location) {
+            return;
+        }
+
+        const data = JSON.stringify({
+            location,
+            type: touchType.UP,
+        });
+
+        EventsEmitter.fireOnTouch(data);
     }
 
     /**

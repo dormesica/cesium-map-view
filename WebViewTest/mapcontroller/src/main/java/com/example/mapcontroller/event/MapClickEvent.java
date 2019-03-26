@@ -12,9 +12,9 @@ public class MapClickEvent {
     private Coordinates location;
 
     /**
-     * Returns the location at which the click event occurred.
+     * Returns the geographic location at which the click event occurred.
      *
-     * @return The coordinates of the click event.
+     * @return The coordinates where the click occurred.
      */
     public Coordinates getLocation() {
         return location;

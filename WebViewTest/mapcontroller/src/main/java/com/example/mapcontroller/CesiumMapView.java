@@ -29,12 +29,18 @@ import com.google.gson.Gson;
  */
 public class CesiumMapView extends FrameLayout {
 
-    /** The name of the events emitter interface in the JavaScript context. */
+    /**
+     * The name of the events emitter interface in the JavaScript context.
+     */
     private static final String JS_INTERFACE_EVENTS_EMITTER = "EventsEmitter";
-    /** The name of the map component in the JavaScript context. */
+    /**
+     * The name of the map component in the JavaScript context.
+     */
     private static final String JS_MAP_NAME = "mapComponent";
 
-    /** Tag for events log from JavaScript. */
+    /**
+     * Tag for events log from JavaScript.
+     */
     private static final String TAG_MAP_VIEW_EVENT = "CesiumMapView.Event";
 
     // properties
@@ -50,6 +56,7 @@ public class CesiumMapView extends FrameLayout {
     private OnMapClickListener mOnMapClickListener = null;
     private OnMapLongClickListener mOnMapLongClickListener = null;
     private OnMapDragListener mOnMapDragListener = null;
+    private OnMapTouchListener mOnMapTouchListener = null;
 
     /**
      * Creates a new <code>CesiumMapView</code> instance.
@@ -94,6 +101,7 @@ public class CesiumMapView extends FrameLayout {
 
     /**
      * Registers a callback to be invoked when a location on the map is clicked.
+     *
      * <strong>Note:</strong> This callback will not be invoked if the clicked location cannot be associated with
      * a set of coordinates (e.g. a clicked performed on space).
      *
@@ -105,6 +113,7 @@ public class CesiumMapView extends FrameLayout {
 
     /**
      * Registers a callback to be invoked when a location on the map is clicked and held.
+     *
      * <strong>Note:</strong> This callback will not be invoked if the clicked location cannot be associated with
      * a set of coordinates (e.g. a clicked performed on space).
      *
@@ -126,6 +135,20 @@ public class CesiumMapView extends FrameLayout {
      */
     public void setOnMapDragListener(OnMapDragListener listener) {
         mOnMapDragListener = listener;
+    }
+
+    /**
+     * Registers a callback to be invoked when the map is dragged.
+     * <p>
+     * A touch occurs when a is either set on the screen (<code>DOWN</code>) or lifted off the screen (<code>UP</code>).
+     *
+     * <strong>NOTE:</strong> This callback will not be invoked if the clicked location cannot be associated with
+     * a set of coordinates (e.g. a clicked performed on space).
+     *
+     * @param listener The callback that will run.
+     */
+    public void setOnMapTouchListener(OnMapTouchListener listener) {
+        mOnMapTouchListener = listener;
     }
 
     /**
@@ -229,6 +252,16 @@ public class CesiumMapView extends FrameLayout {
             if (mOnMapDragListener != null) {
                 mHandler.post(() -> mOnMapDragListener.onDrag(
                         CesiumMapView.this, mGson.fromJson(eventDataString, MapDragEvent.class)));
+            }
+        }
+
+        @JavascriptInterface
+        public void fireOnTouch(final String eventDataString) {
+            Log.d(TAG_MAP_VIEW_EVENT, "TOUCH");
+
+            if (mOnMapTouchListener != null) {
+                mHandler.post(() -> mOnMapTouchListener.onTouch(
+                        CesiumMapView.this, mGson.fromJson(eventDataString, MapTouchEvent.class)));
             }
         }
     }
