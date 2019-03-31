@@ -45,11 +45,11 @@ class MainActivity : AppCompatActivity() {
 
         val button: Button = findViewById(R.id.extent_button)
         button.setOnClickListener {
-            val builder = GeoJsonLayer.Builder.from(
-            "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[-149.4140625,-17.308687886770024],[110.74218749999999,-17.308687886770024],[110.74218749999999,59.355596110016315],[-149.4140625,59.355596110016315],[-149.4140625,-17.308687886770024]]]}}]}")
+            val geoJson = GeoJsonLayer.Builder.from(
+            "{\"type\":\"FeatureCollection,\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[-149.4140625,-17.308687886770024],[110.74218749999999,-17.308687886770024],[110.74218749999999,59.355596110016315],[-149.4140625,59.355596110016315],[-149.4140625,-17.308687886770024]]]}}]}")
+                .build()
 
-            builder.setColor("#e")
-            mapView.load(builder.build()) {
+            mapView.load(geoJson) {
                 eventsDisplay.text = it
             }
         }

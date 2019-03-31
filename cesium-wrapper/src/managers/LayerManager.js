@@ -23,8 +23,9 @@ class LayerManager {
      * Adds the given layer to the viewer.
      * layer should be a cesium layer descriptor.
      * @param {*} layer Layer descriptior
+     * @param {String} callbackId The Android callback to invoke.
      */
-    addLayer(layer) {
+    addLayer(layer, callbackId) {
         const layerId = uuid();
 
         // TODO can assume no collision
@@ -32,6 +33,11 @@ class LayerManager {
         if (!cesiumLayer) {
             throw new MapError('Failed to create layer');
         }
+
+        // TODO cannot be done here
+        cesiumLayer
+            .then(() => CallbackSync.invokeCallback(callbackId, layerId))
+            .catch(() => CallbackSync.invokeCallback(callbackId, null));
 
         this._layers.set(layerId, cesiumLayer);
         return layerId;

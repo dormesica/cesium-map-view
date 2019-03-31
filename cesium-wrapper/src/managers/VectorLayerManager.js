@@ -40,13 +40,20 @@ VectorLayerManager.Types = Object.freeze({
  * Loads the given GeoJSON string onto the viewer.
  * @param {Cesium.Viewer} viewer The cesium viewer.
  * @param {Object} options layer options.
+ * @returns {Promise<Cesium.GeoJsonDataSource} 
  */
 function loadGeoJSON(viewer, options) {
-    const result = Cesium.GeoJsonDataSource.load(options.url || JSON.parse(options.geoJson), {
+    let source = null;
+    try {
+        source = options.url || JSON.parse(options.geoJson)
+    } catch {
+        return Promise.reject('Malformed JSON object');
+    }
+
+    const result = Cesium.GeoJsonDataSource.load(source, {
         stroke: Cesium.Color.fromCssColorString(options.outlineColor).withAlpha(options.opacity),
         fill: Cesium.Color.fromCssColorString(options.color).withAlpha(options.opacity),
     });
-
     viewer.dataSources.add(result);
 
     return result;

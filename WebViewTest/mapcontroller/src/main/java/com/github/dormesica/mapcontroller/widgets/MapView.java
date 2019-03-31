@@ -16,6 +16,7 @@ import com.github.dormesica.mapcontroller.layers.GeoJsonLayer;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 import com.github.dormesica.mapcontroller.location.Rectangle;
 import com.github.dormesica.mapcontroller.event.*;
+import com.github.dormesica.mapcontroller.util.CallbackSync;
 import com.google.gson.Gson;
 
 /**
@@ -37,16 +38,26 @@ public class MapView extends FrameLayout {
      */
     private static final String JS_INTERFACE_EVENTS_EMITTER = "EventsEmitter";
     /**
+     * The name of the CallbackSync interface in the JavaScript context.
+     */
+    private static final String JS_INTERFACE_CALLBACK_SYNC = "CallbackSync";
+    /**
      * The name of the map component in the JavaScript context.
      */
     private static final String JS_MAP_NAME = "mapComponent";
-    /** The layer manager name of the JavaScript map component */
+    /**
+     * The layer manager name of the JavaScript map component
+     */
     private static final String JS_VECTOR_LAYER_MANAGER = "vectorLayerManager";
 
-    /** Script format for focusOn operations */
+    /**
+     * Script format for focusOn operations
+     */
     private static final String SCRIPT_FOCUS_ON = JS_MAP_NAME + ".focusOn(%s);";
-    /** Script format for addLayer operations */
-    private static final String SCRIPT_ADD_LAYER = JS_MAP_NAME + ".%s.addLayer(%s);";
+    /**
+     * Script format for addLayer operations
+     */
+    private static final String SCRIPT_ADD_LAYER = JS_MAP_NAME + ".%s.addLayer(%s, \"%s\");";
 
     /**
      * Tag for events log from JavaScript.
@@ -200,12 +211,14 @@ public class MapView extends FrameLayout {
      * <p>
      * The layer ID should be used in future manipulations on the layer.
      *
-     * @param layer The layer to be loaded
+     * @param layer    The layer to be loaded
      * @param callback a callback to be invoked with the layer ID when the operation completes.
      */
     public void load(@NonNull GeoJsonLayer layer, @NonNull ValueCallback<String> callback) {
-        String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, mGson.toJson(layer));
-        mWebView.evaluateJavascript(script, callback);
+        String callbackId = CallbackSync.getInstance().addCallback(callback);
+        String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, mGson.toJson(layer), callbackId);
+
+        mWebView.evaluateJavascript(script, null);
         // TODO load failure
         // TODO if URL should be request in Android (cannot be requested from JavaScript)
         //      inside MapView.load request the geoJSON
@@ -222,6 +235,7 @@ public class MapView extends FrameLayout {
         settings.setAllowFileAccessFromFileURLs(true);
 
         mWebView.addJavascriptInterface(new EventsEmitter(), JS_INTERFACE_EVENTS_EMITTER);
+        mWebView.addJavascriptInterface(CallbackSync.getInstance(), JS_INTERFACE_CALLBACK_SYNC);
 
         mWebView.loadUrl("file:///android_asset/index.html");
     }

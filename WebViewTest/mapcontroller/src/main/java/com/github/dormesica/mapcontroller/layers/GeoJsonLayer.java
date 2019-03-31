@@ -38,8 +38,9 @@ public class GeoJsonLayer {
                 color + " is not a valid color string");
         Preconditions.checkArgument(builder.outlineColor.matches(COLOR_REGEX),
                 outlineColor + " is not a valid color string");
-        Preconditions.checkArgument(0 <= opacity && opacity <= 1, "Opacity must be a value between 0 and 1.");
-        Preconditions.checkArgument(outlineWidth > 0, "Outline width cannot be negative.");
+        Preconditions.checkArgument(0 <= builder.opacity && builder.opacity <= 1,
+                "Opacity must be a value between 0 and 1.");
+        Preconditions.checkArgument(builder.outlineWidth > 0, "Outline width must be greater than 0");
 
         url = null;
         geoJson = null;
