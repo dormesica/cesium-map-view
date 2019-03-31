@@ -1,7 +1,8 @@
 import { areCoordiantesValid } from './utils/validation';
-import MapError from './utils/Error';
+import MapError from './utils/MapError';
 import { convertRadiansToDegrees } from './utils/math';
 import EventsHandler from './EventsHandler';
+import VectorLayerManager from './managers/VectorLayerManager';
 
 /**
  * @typedef {Object} Coordinates
@@ -33,10 +34,12 @@ export default class MapComponent {
 
         this._initializeMap();
         this._eventsHandler = new EventsHandler(this, 500);
+        this._vectorLayerManager = new VectorLayerManager(this);
     }
 
-    // public methods
-    // --------------
+    get vectorLayerManager() {
+        return this._vectorLayerManager;
+    }
 
     /**
      * Gets the amount of milliseconds required for a click to become a long-click
@@ -113,7 +116,7 @@ export default class MapComponent {
 
         const cartesianPosition = this._viewer.camera.pickEllipsoid(pixel, this._viewer.scene.globe.ellipsoid);
         if (!cartesianPosition) {
-            return null; // TODO should throw?
+            return null;
         }
 
         const geographicPosition = Cesium.Cartographic.fromCartesian(cartesianPosition);
@@ -123,9 +126,6 @@ export default class MapComponent {
             alt: geographicPosition.height,
         };
     }
-
-    // "private" helper methods
-    // ------------------------
 
     /**
      * Initializes the cesium instance.

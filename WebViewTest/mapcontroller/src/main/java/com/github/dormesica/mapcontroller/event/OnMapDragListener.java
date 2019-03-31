@@ -1,6 +1,6 @@
 package com.github.dormesica.mapcontroller.event;
 
-import com.github.dormesica.mapcontroller.widgets.CesiumMapView;
+import com.github.dormesica.mapcontroller.widgets.MapView;
 
 /**
  * Interface definition for a callback to be invoked when the map has been dragged.
@@ -15,5 +15,5 @@ public interface OnMapDragListener {
      * @param map The map that was clicked
      * @param dragEvent Additional data about the event.
      */
-    void onDrag(CesiumMapView map, MapDragEvent dragEvent);
+    void onDrag(MapView map, MapDragEvent dragEvent);
 }

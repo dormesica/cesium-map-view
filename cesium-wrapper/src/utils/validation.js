@@ -22,3 +22,14 @@ export function areCoordiantesValid(coordinates) {
 
     return validLon && validLat && validAlt;
 }
+
+/**
+ * Checks if the given instance is of an abstract class.
+ * @param {*} instance The instance to check.
+ * @param {Function} abstractClass The abstract class
+ * @returns {Boolean} true if instance is of an abstract class, otherwise returns false.
+ */
+export function checkAbstractConstructor(instance, abstractClass) {
+    return instance.constructor === abstractClass;
+}
+

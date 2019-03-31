@@ -1,6 +1,6 @@
 package com.github.dormesica.mapcontroller.event;
 
-import com.github.dormesica.mapcontroller.widgets.CesiumMapView;
+import com.github.dormesica.mapcontroller.widgets.MapView;
 
 /**
  * Interface definition for a callback to be invoked when the map is ready to be interacted with.
@@ -14,5 +14,5 @@ public interface OnMapReadyListener {
      *
      * @param map The map that was clicked
      */
-    void onMapReady(CesiumMapView map);
+    void onMapReady(MapView map);
 }

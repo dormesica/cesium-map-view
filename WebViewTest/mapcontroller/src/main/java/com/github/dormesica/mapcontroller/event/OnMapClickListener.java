@@ -1,6 +1,6 @@
 package com.github.dormesica.mapcontroller.event;
 
-import com.github.dormesica.mapcontroller.widgets.CesiumMapView;
+import com.github.dormesica.mapcontroller.widgets.MapView;
 
 /**
  * Interface definition for a callback to be invoked when a location on the map
@@ -16,5 +16,5 @@ public interface OnMapClickListener {
      * @param map The map that was clicked
      * @param clickEvent Additional data about the event.
      */
-    void onClick(CesiumMapView map, MapClickEvent clickEvent);
+    void onClick(MapView map, MapClickEvent clickEvent);
 }

@@ -1,5 +1,5 @@
 import { isNumber } from './validation';
-import MapError from './Error';
+import MapError from './MapError';
 
 /**
  * Converts the given radians value to degrees.

@@ -10,7 +10,9 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import androidx.annotation.NonNull;
 import com.github.dormesica.mapcontroller.R;
+import com.github.dormesica.mapcontroller.layers.GeoJsonLayer;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 import com.github.dormesica.mapcontroller.location.Rectangle;
 import com.github.dormesica.mapcontroller.event.*;
@@ -28,7 +30,7 @@ import com.google.gson.Gson;
  *
  * @since 1.0.0
  */
-public class CesiumMapView extends FrameLayout {
+public class MapView extends FrameLayout {
 
     /**
      * The name of the events emitter interface in the JavaScript context.
@@ -38,6 +40,13 @@ public class CesiumMapView extends FrameLayout {
      * The name of the map component in the JavaScript context.
      */
     private static final String JS_MAP_NAME = "mapComponent";
+    /** The layer manager name of the JavaScript map component */
+    private static final String JS_VECTOR_LAYER_MANAGER = "vectorLayerManager";
+
+    /** Script format for focusOn operations */
+    private static final String SCRIPT_FOCUS_ON = JS_MAP_NAME + ".focusOn(%s);";
+    /** Script format for addLayer operations */
+    private static final String SCRIPT_ADD_LAYER = JS_MAP_NAME + ".%s.addLayer(%s);";
 
     /**
      * Tag for events log from JavaScript.
@@ -65,7 +74,7 @@ public class CesiumMapView extends FrameLayout {
      * @param context An Activity Context to access application assets
      * @param attrs   An AttributeSet passed to our parent
      */
-    public CesiumMapView(Context context, AttributeSet attrs) {
+    public MapView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mGson = new Gson();
@@ -148,7 +157,7 @@ public class CesiumMapView extends FrameLayout {
      *
      * @param listener The callback that will run.
      */
-    public void setOnMapTouchListener(OnMapTouchListener listener) {
+    public void setOnMapTouchListener(@NonNull OnMapTouchListener listener) {
         mOnMapTouchListener = listener;
     }
 
@@ -159,8 +168,8 @@ public class CesiumMapView extends FrameLayout {
      *
      * @param location The coordinates on which to focus.
      */
-    public void focusOn(Coordinates location) {
-        mWebView.evaluateJavascript(createFocusScript(location), null);
+    public void focusOn(@NonNull Coordinates location) {
+        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, location), null);
     }
 
     /**
@@ -168,8 +177,8 @@ public class CesiumMapView extends FrameLayout {
      *
      * @param extent The extent on which to focus
      */
-    public void focusOn(Rectangle extent) {
-        mWebView.evaluateJavascript(createFocusScript(extent), null);
+    public void focusOn(@NonNull Rectangle extent) {
+        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, extent), null);
     }
 
     /**
@@ -178,11 +187,28 @@ public class CesiumMapView extends FrameLayout {
      *
      * @param callback Called when the evaluation completes.
      */
-    public void getViewExtent(ValueCallback<Rectangle> callback) {
+    public void getViewExtent(@NonNull ValueCallback<Rectangle> callback) {
         String script = String.format("%s.getViewExtent();", JS_MAP_NAME);
 
         mWebView.evaluateJavascript(script,
                 (String result) -> callback.onReceiveValue(mGson.fromJson(result, Rectangle.class)));
+    }
+
+    /**
+     * Asynchronously loads the given GeoJSON layer onto the map. <code>callback</code> is invoked with the layers ID
+     * when the operation completes.
+     * <p>
+     * The layer ID should be used in future manipulations on the layer.
+     *
+     * @param layer The layer to be loaded
+     * @param callback a callback to be invoked with the layer ID when the operation completes.
+     */
+    public void load(@NonNull GeoJsonLayer layer, @NonNull ValueCallback<String> callback) {
+        String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, mGson.toJson(layer));
+        mWebView.evaluateJavascript(script, callback);
+        // TODO load failure
+        // TODO if URL should be request in Android (cannot be requested from JavaScript)
+        //      inside MapView.load request the geoJSON
     }
 
     /**
@@ -201,16 +227,6 @@ public class CesiumMapView extends FrameLayout {
     }
 
     /**
-     * Generates the JavaScript code that activates the focusOn function on the cesium view.
-     *
-     * @param location The location on which to focus.
-     * @return The JavaScript code that focuses on <code>location</code>.
-     */
-    private String createFocusScript(Object location) {
-        return String.format("%s.focusOn(%s);", JS_MAP_NAME, mGson.toJson(location));
-    }
-
-    /**
      * Inner class used as a bridge between JavaScript and Android.
      * Contains the logic that should be executed when receiving an event from the JavaScript map.
      */
@@ -222,7 +238,7 @@ public class CesiumMapView extends FrameLayout {
             mIsInitialized = true;
 
             if (mOnMapReadyListener != null) {
-                mHandler.post(() -> mOnMapReadyListener.onMapReady(CesiumMapView.this));
+                mHandler.post(() -> mOnMapReadyListener.onMapReady(MapView.this));
             }
         }
 
@@ -232,7 +248,7 @@ public class CesiumMapView extends FrameLayout {
 
             if (mOnMapClickListener != null) {
                 mHandler.post(() -> mOnMapClickListener.onClick(
-                        CesiumMapView.this, mGson.fromJson(eventDataString, MapClickEvent.class)));
+                        MapView.this, mGson.fromJson(eventDataString, MapClickEvent.class)));
             }
         }
 
@@ -242,7 +258,7 @@ public class CesiumMapView extends FrameLayout {
 
             if (mOnMapLongClickListener != null) {
                 mHandler.post(() -> mOnMapLongClickListener.onLongClick(
-                        CesiumMapView.this, mGson.fromJson(eventDataString, MapClickEvent.class)));
+                        MapView.this, mGson.fromJson(eventDataString, MapClickEvent.class)));
             }
         }
 
@@ -252,7 +268,7 @@ public class CesiumMapView extends FrameLayout {
 
             if (mOnMapDragListener != null) {
                 mHandler.post(() -> mOnMapDragListener.onDrag(
-                        CesiumMapView.this, mGson.fromJson(eventDataString, MapDragEvent.class)));
+                        MapView.this, mGson.fromJson(eventDataString, MapDragEvent.class)));
             }
         }
 
@@ -262,7 +278,7 @@ public class CesiumMapView extends FrameLayout {
 
             if (mOnMapTouchListener != null) {
                 mHandler.post(() -> mOnMapTouchListener.onTouch(
-                        CesiumMapView.this, mGson.fromJson(eventDataString, MapTouchEvent.class)));
+                        MapView.this, mGson.fromJson(eventDataString, MapTouchEvent.class)));
             }
         }
     }
