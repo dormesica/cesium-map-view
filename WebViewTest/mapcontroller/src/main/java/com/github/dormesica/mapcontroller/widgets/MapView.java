@@ -5,10 +5,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.webkit.JavascriptInterface;
-import android.webkit.ValueCallback;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
+import android.webkit.*;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import com.github.dormesica.mapcontroller.R;
@@ -55,9 +52,15 @@ public class MapView extends FrameLayout {
      */
     private static final String SCRIPT_FOCUS_ON = JS_MAP_NAME + ".focusOn(%s);";
     /**
-     * Script format for addLayer operations
+     * Script format for addLayer operations.
+     * First string is the layer manger, second is the layer ID, third is the callback ID to invoke.
      */
     private static final String SCRIPT_ADD_LAYER = JS_MAP_NAME + ".%s.addLayer(%s, \"%s\");";
+    /**
+     * Script format for removeLayer operations.
+     * First string is the layer manger, second is the layer ID, third is the callback ID to invoke.
+     */
+    private static final String SCRIPT_REMOVE_LAYER = JS_MAP_NAME + ".%s.removeLayer(%s, \"%s\");";
 
     /**
      * Tag for events log from JavaScript.
@@ -207,7 +210,8 @@ public class MapView extends FrameLayout {
 
     /**
      * Asynchronously loads the given GeoJSON layer onto the map. <code>callback</code> is invoked with the layers ID
-     * when the operation completes.
+     * when the operation completes. If the layer failed to be added to the map the value passed to the callback is
+     * <code>null</code>.
      * <p>
      * The layer ID should be used in future manipulations on the layer.
      *
@@ -215,13 +219,25 @@ public class MapView extends FrameLayout {
      * @param callback a callback to be invoked with the layer ID when the operation completes.
      */
     public void load(@NonNull GeoJsonLayer layer, @NonNull ValueCallback<String> callback) {
-        String callbackId = CallbackSync.getInstance().addCallback(callback);
+        String callbackId = CallbackSync.getInstance().registerCallback(callback);
         String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, mGson.toJson(layer), callbackId);
 
         mWebView.evaluateJavascript(script, null);
-        // TODO load failure
-        // TODO if URL should be request in Android (cannot be requested from JavaScript)
-        //      inside MapView.load request the geoJSON
+    }
+
+    /**
+     * Asynchronously removes a layer from the map. <code>callback</code> is invoked when the operation completes
+     * with a boolean value that indicates whether the operation succeeded or not.
+     *
+     * @param layerId The ID of the layer to be removed.
+     * @param callback Called when the layer is removed to upon failure.
+     */
+    public void remove(@NonNull String layerId, ValueCallback<Boolean> callback) {
+        String callbackId = CallbackSync.getInstance()
+                .registerCallback((String result) -> callback.onReceiveValue(result.equals("true")));
+        String script = String.format(SCRIPT_REMOVE_LAYER, JS_VECTOR_LAYER_MANAGER, layerId, callbackId);
+
+        mWebView.evaluateJavascript(script, null);
     }
 
     /**
@@ -233,6 +249,9 @@ public class MapView extends FrameLayout {
 
         settings.setJavaScriptEnabled(true);
         settings.setAllowFileAccessFromFileURLs(true);
+        settings.setAllowFileAccess(false);
+
+        mWebView.setWebViewClient(new WebViewClient());
 
         mWebView.addJavascriptInterface(new EventsEmitter(), JS_INTERFACE_EVENTS_EMITTER);
         mWebView.addJavascriptInterface(CallbackSync.getInstance(), JS_INTERFACE_CALLBACK_SYNC);

@@ -53,7 +53,7 @@ public class CallbackSync {
      * @param callback The callback to be registered.
      * @return The ID of the callback.
      */
-    public String addCallback(@NonNull ValueCallback<String> callback) {
+    public String registerCallback(@NonNull ValueCallback<String> callback) {
         String id = UUID.randomUUID().toString();
         mMap.put(id, callback);
 

@@ -2,6 +2,7 @@ package com.github.dormesica.webviewtest
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.TextView
@@ -12,6 +13,7 @@ import com.github.dormesica.mapcontroller.widgets.MapView
 import com.github.dormesica.mapcontroller.event.MapClickEvent
 import com.github.dormesica.mapcontroller.event.MapTouchEvent
 import com.github.dormesica.mapcontroller.layers.GeoJsonLayer
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,8 +26,18 @@ class MainActivity : AppCompatActivity() {
         val mapView: MapView = findViewById(R.id.cesium_map_view)
         val eventsDisplay: TextView = findViewById(R.id.event_display)
 
+        var layerId = ""
         mapView.setOnMapReadyListener {
             Toast.makeText(this, "Map Ready", Toast.LENGTH_SHORT).show()
+
+            val geoJson = GeoJsonLayer.Builder.from(
+                URL("https://cesiumjs.org/Cesium/Apps/SampleData/simplestyles.geojson")
+            )
+                .build()
+
+            mapView.load(geoJson) {
+                layerId = it
+            }
         }
         mapView.setOnMapClickListener { map: MapView, data: MapClickEvent ->
             eventsDisplay.text = getString(R.string.click_event_text, data.location.toString())
@@ -45,14 +57,12 @@ class MainActivity : AppCompatActivity() {
 
         val button: Button = findViewById(R.id.extent_button)
         button.setOnClickListener {
-            val geoJson = GeoJsonLayer.Builder.from(
-            "{\"type\":\"FeatureCollection,\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[-149.4140625,-17.308687886770024],[110.74218749999999,-17.308687886770024],[110.74218749999999,59.355596110016315],[-149.4140625,59.355596110016315],[-149.4140625,-17.308687886770024]]]}}]}")
-                .build()
-
-            mapView.load(geoJson) {
-                eventsDisplay.text = it
+//            mapView.getViewExtent {
+//                eventsDisplay.text = it.toString()
+//            }
+            mapView.remove(layerId) {
+                Log.d("LayerRemoved", it.toString())
             }
         }
-
     }
 }

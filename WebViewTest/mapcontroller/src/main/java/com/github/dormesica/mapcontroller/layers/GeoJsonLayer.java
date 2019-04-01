@@ -24,6 +24,7 @@ public class GeoJsonLayer {
     private String outlineColor;
     private int outlineWidth;
     private double opacity;
+    private String pointIcon;
 
     /**
      * Creates a new <code>GeoJSON</code> from the builder.
@@ -56,6 +57,7 @@ public class GeoJsonLayer {
         outlineColor = builder.outlineColor;
         opacity = builder.opacity;
         outlineWidth = builder.outlineWidth;
+        pointIcon = builder.pointIcon;
     }
 
     /**
@@ -67,6 +69,12 @@ public class GeoJsonLayer {
     public static final class Builder {
 
         private static final Gson sGson = new Gson();
+        private static final String DEFAULT_POINT_ICON = "data:image/svg+xml," +
+                "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
+                "xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" width=\"20px\" height=\"20px\" " +
+                "xml:space=\"preserve\">" +
+                "<circle cx=\"10\" cy=\"10\" r=\"9\" stroke=\"black\" stroke-width=\"3\" fill=\"white\" />" +
+                "</svg>";
 
         private String geoJson;
         private URL url;
@@ -74,6 +82,7 @@ public class GeoJsonLayer {
         private String outlineColor;
         private int outlineWidth;
         private double opacity;
+        private String pointIcon;
 
         /**
          * Creates a new <code>GeoJsonLayer.Builder</code> instance.
@@ -85,6 +94,7 @@ public class GeoJsonLayer {
             outlineColor = "#000000";
             outlineWidth = 2;
             opacity = 0.35;
+            pointIcon = DEFAULT_POINT_ICON;
         }
 
         /**
@@ -172,8 +182,21 @@ public class GeoJsonLayer {
          * @param opacity The opacity of the geometry.
          * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
          */
-        public Builder setOpacity(double opacity) throws IllegalArgumentException {
+        public Builder setOpacity(double opacity) {
             this.opacity = opacity;
+            return this;
+        }
+
+        /**
+         * Set the icon for point entities in the GeoJSON.
+         * <p>
+         * Can either be a URL to an online resource or a SVG uri e.g. {@code data:image/svg+xml,<svg>...</svg>}
+         *
+         * @param svg The SVG uri as a string.
+         * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
+         */
+        public Builder setPointIcon(String svg) {
+            pointIcon = svg;
             return this;
         }
 

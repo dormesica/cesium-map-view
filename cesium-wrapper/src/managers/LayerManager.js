@@ -34,26 +34,33 @@ class LayerManager {
             throw new MapError('Failed to create layer');
         }
 
+        this._layers.set(layerId, cesiumLayer);
+
         // TODO cannot be done here
         cesiumLayer
-            .then(() => CallbackSync.invokeCallback(callbackId, layerId))
-            .catch(() => CallbackSync.invokeCallback(callbackId, null));
-
-        this._layers.set(layerId, cesiumLayer);
-        return layerId;
+            .then(() => CallbackSync.invokeCallback(callbackId, layerId));
     }
 
     /**
      * Removes the layer with the given id.
      * @param {String} layerId The layer ID to remove.
+     * @param {String} callbackId The Android callback to invoke.
      */
-    removeLayer(layerId) {
+    removeLayer(layerId, callbackId) {
         if (!this._layers.has(layerId)) {
             return;
         }
 
-        this._removeLayer(this._layers.get(layerId));
-        this._layers.delete(layerId);
+        const promise = this._removeLayer(this._layers.get(layerId));
+        promise.then(success => {
+            let value = "false";
+            if (success) {
+                this._layers.delete(layerId);
+                value = "true";
+            }
+
+            CallbackSync.invokeCallback(callbackId, value);
+        });
     }
 
     /**

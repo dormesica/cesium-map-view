@@ -1,6 +1,8 @@
 import LayerManager from './LayerManager';
 import MapError from '../utils/MapError';
 
+const SCALING_DEFINIIONS = new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.5);
+
 /**
  * @typedef GeoJsonLayer
  * Describes the scheme for GeoJSON layers.
@@ -23,13 +25,15 @@ class VectorLayerManager extends LayerManager {
     _createLayer(layer) {
         switch (layer.type) {
             case VectorLayerManager.Types.GeoJSON:
-                return loadGeoJSON(mapComponent._viewer, layer);
+                return loadGeoJSON(this._mapComponent._viewer, layer);
             default:
                 throw MapError.invalidArgumentError('layer.type', 'VectorLayerManager._createLayer');
         }
     }
 
-    _removeLayer(layer) {}
+    _removeLayer(layer) {
+        return layer.then(dataSource => this._mapComponent._viewer.dataSources.remove(dataSource, true));
+    }
 }
 
 VectorLayerManager.Types = Object.freeze({
@@ -40,12 +44,12 @@ VectorLayerManager.Types = Object.freeze({
  * Loads the given GeoJSON string onto the viewer.
  * @param {Cesium.Viewer} viewer The cesium viewer.
  * @param {Object} options layer options.
- * @returns {Promise<Cesium.GeoJsonDataSource} 
+ * @returns {Promise<Cesium.GeoJsonDataSource}
  */
 function loadGeoJSON(viewer, options) {
     let source = null;
     try {
-        source = options.url || JSON.parse(options.geoJson)
+        source = options.url || JSON.parse(options.geoJson);
     } catch {
         return Promise.reject('Malformed JSON object');
     }
@@ -54,7 +58,18 @@ function loadGeoJSON(viewer, options) {
         stroke: Cesium.Color.fromCssColorString(options.outlineColor).withAlpha(options.opacity),
         fill: Cesium.Color.fromCssColorString(options.color).withAlpha(options.opacity),
     });
-    viewer.dataSources.add(result);
+    result.then(dataSource => {
+        viewer.dataSources.add(dataSource);
+
+        const entities = dataSource.entities.values;
+        entities.forEach(element => {
+            if (element.billboard) {
+                element.billboard.image = options.pointIcon;
+                element.billboard.heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
+                element.billboard.scaleByDistance = SCALING_DEFINIIONS;
+            }
+        });
+    });
 
     return result;
 }
