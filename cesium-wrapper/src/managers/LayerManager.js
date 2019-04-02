@@ -51,16 +51,16 @@ class LayerManager {
             return;
         }
 
-        const promise = this._removeLayer(this._layers.get(layerId));
-        promise.then(success => {
-            let value = "false";
-            if (success) {
-                this._layers.delete(layerId);
-                value = "true";
-            }
+        this._removeLayer(this._layers.get(layerId))
+            .then(success => {
+                let value = "false";
+                if (success) {
+                    this._layers.delete(layerId);
+                    value = "true";
+                }
 
-            CallbackSync.invokeCallback(callbackId, value);
-        });
+                CallbackSync.invokeCallback(callbackId, value);
+            });
     }
 
     /**

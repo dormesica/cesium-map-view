@@ -60,7 +60,7 @@ public class MapView extends FrameLayout {
      * Script format for removeLayer operations.
      * First string is the layer manger, second is the layer ID, third is the callback ID to invoke.
      */
-    private static final String SCRIPT_REMOVE_LAYER = JS_MAP_NAME + ".%s.removeLayer(%s, \"%s\");";
+    private static final String SCRIPT_REMOVE_LAYER = JS_MAP_NAME + ".%s.removeLayer(\"%s\", \"%s\");";
 
     /**
      * Tag for events log from JavaScript.
@@ -230,7 +230,7 @@ public class MapView extends FrameLayout {
      * with a boolean value that indicates whether the operation succeeded or not.
      *
      * @param layerId The ID of the layer to be removed.
-     * @param callback Called when the layer is removed to upon failure.
+     * @param callback Called when the layer is removed or upon failure.
      */
     public void remove(@NonNull String layerId, ValueCallback<Boolean> callback) {
         String callbackId = CallbackSync.getInstance()
