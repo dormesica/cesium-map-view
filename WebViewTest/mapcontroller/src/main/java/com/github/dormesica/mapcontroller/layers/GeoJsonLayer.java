@@ -25,6 +25,7 @@ public class GeoJsonLayer {
     private int outlineWidth;
     private double opacity;
     private String pointIcon;
+    private boolean zoom;
 
     /**
      * Creates a new <code>GeoJSON</code> from the builder.
@@ -58,6 +59,7 @@ public class GeoJsonLayer {
         opacity = builder.opacity;
         outlineWidth = builder.outlineWidth;
         pointIcon = builder.pointIcon;
+        zoom = builder.zoom;
     }
 
     /**
@@ -83,6 +85,7 @@ public class GeoJsonLayer {
         private int outlineWidth;
         private double opacity;
         private String pointIcon;
+        private boolean zoom;
 
         /**
          * Creates a new <code>GeoJsonLayer.Builder</code> instance.
@@ -95,6 +98,7 @@ public class GeoJsonLayer {
             outlineWidth = 2;
             opacity = 0.35;
             pointIcon = DEFAULT_POINT_ICON;
+            zoom = false;
         }
 
         /**
@@ -197,6 +201,19 @@ public class GeoJsonLayer {
          */
         public Builder setPointIcon(String svg) {
             pointIcon = svg;
+            return this;
+        }
+
+        /**
+         * Set if the map should zoom to the layer after it has been loaded.
+         * <p>
+         * By default, the map does not zoom to the layer.
+         *
+         * @param shouldZoom Should the map zoom to the layer after load has finished.
+         * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
+         */
+        public Builder shouldZoom(boolean shouldZoom) {
+            this.zoom = shouldZoom;
             return this;
         }
 

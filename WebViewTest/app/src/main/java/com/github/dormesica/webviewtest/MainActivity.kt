@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             val geoJson = GeoJsonLayer.Builder.from(
                 URL("https://cesiumjs.org/Cesium/Apps/SampleData/simplestyles.geojson")
             )
+                .shouldZoom(true)
                 .build()
 
             mapView.load(geoJson) {

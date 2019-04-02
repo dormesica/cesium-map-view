@@ -53,7 +53,7 @@ public class CallbackSync {
      * @param callback The callback to be registered.
      * @return The ID of the callback.
      */
-    public String registerCallback(@NonNull ValueCallback<String> callback) {
+    public String register(@NonNull ValueCallback<String> callback) {
         String id = UUID.randomUUID().toString();
         mMap.put(id, callback);
 
@@ -66,7 +66,7 @@ public class CallbackSync {
      * @param data The data on which to invoked the callback.
      */
     @JavascriptInterface
-    public void invokeCallback(String id, @Nullable String data) {
+    public void invoke(String id, @Nullable String data) {
         ValueCallback<String> callback = mMap.remove(id);
         if (callback == null) {
             return;

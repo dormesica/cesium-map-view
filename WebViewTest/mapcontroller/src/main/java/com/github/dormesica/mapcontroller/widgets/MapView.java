@@ -219,7 +219,7 @@ public class MapView extends FrameLayout {
      * @param callback a callback to be invoked with the layer ID when the operation completes.
      */
     public void load(@NonNull GeoJsonLayer layer, @NonNull ValueCallback<String> callback) {
-        String callbackId = CallbackSync.getInstance().registerCallback(callback);
+        String callbackId = CallbackSync.getInstance().register(callback);
         String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, mGson.toJson(layer), callbackId);
 
         mWebView.evaluateJavascript(script, null);
@@ -234,7 +234,7 @@ public class MapView extends FrameLayout {
      */
     public void remove(@NonNull String layerId, ValueCallback<Boolean> callback) {
         String callbackId = CallbackSync.getInstance()
-                .registerCallback((String result) -> callback.onReceiveValue(result.equals("true")));
+                .register((String result) -> callback.onReceiveValue(result.equals("true")));
         String script = String.format(SCRIPT_REMOVE_LAYER, JS_VECTOR_LAYER_MANAGER, layerId, callbackId);
 
         mWebView.evaluateJavascript(script, null);

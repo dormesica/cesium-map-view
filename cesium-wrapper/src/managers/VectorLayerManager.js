@@ -60,6 +60,9 @@ function loadGeoJSON(viewer, options) {
     });
     result.then(dataSource => {
         viewer.dataSources.add(dataSource);
+        if (options.zoom) {
+            viewer.zoomTo(dataSource);
+        }
 
         const entities = dataSource.entities.values;
         entities.forEach(element => {
