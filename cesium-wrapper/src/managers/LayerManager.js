@@ -38,7 +38,7 @@ class LayerManager {
 
         // TODO cannot be done here
         cesiumLayer
-            .then(() => CallbackSync.invokeCallback(callbackId, layerId));
+            .then(() => CallbackSync.invoke(callbackId, layerId));
     }
 
     /**
@@ -59,7 +59,7 @@ class LayerManager {
                     value = "true";
                 }
 
-                CallbackSync.invokeCallback(callbackId, value);
+                CallbackSync.invoke(callbackId, value);
             });
     }
 
