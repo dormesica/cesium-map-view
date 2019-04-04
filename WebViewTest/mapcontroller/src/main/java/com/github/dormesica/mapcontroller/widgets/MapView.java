@@ -9,15 +9,16 @@ import android.webkit.*;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import com.github.dormesica.mapcontroller.R;
-import com.github.dormesica.mapcontroller.layers.GeoJsonLayer;
+import com.github.dormesica.mapcontroller.layers.*;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 import com.github.dormesica.mapcontroller.location.Rectangle;
 import com.github.dormesica.mapcontroller.event.*;
 import com.github.dormesica.mapcontroller.util.CallbackSync;
+import com.github.dormesica.mapcontroller.util.JsonConverter;
 import com.google.gson.Gson;
 
 /**
- * A 3D map view for android applications.
+ * A view which displays a 3D map.
  * <p>
  * The MapView is essentially a FrameLayout, and as such any operation that can be performed on a FrameLayout
  * (or a View in general) is possible. In particular, any android event, such as OnClick, are still emitted by the
@@ -91,7 +92,7 @@ public class MapView extends FrameLayout {
     public MapView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mGson = new Gson();
+        mGson = JsonConverter.getConverter();
         mHandler = new Handler();
 
         inflate(context, R.layout.cesium_map_view, this);
@@ -218,8 +219,9 @@ public class MapView extends FrameLayout {
      * @param layer    The layer to be loaded
      * @param callback a callback to be invoked with the layer ID when the operation completes.
      */
-    public void load(@NonNull GeoJsonLayer layer, @NonNull ValueCallback<String> callback) {
-        String callbackId = CallbackSync.getInstance().register(callback);
+    public void load(@NonNull GeoJsonLayer layer, @NonNull ValueCallback<VectorLayer> callback) {
+        String callbackId = CallbackSync.getInstance().register((String layerJsonString) ->
+                callback.onReceiveValue(mGson.fromJson(layerJsonString, VectorLayer.class)));
         String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, mGson.toJson(layer), callbackId);
 
         mWebView.evaluateJavascript(script, null);

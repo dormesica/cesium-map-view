@@ -11,7 +11,7 @@ public abstract class Entity {
 
     private String id;
     private String name;
-    private boolean show;
+    private boolean visibility;
 
     /**
      * Get the ID of the entity.
@@ -49,10 +49,19 @@ public abstract class Entity {
     }
 
     /**
+     * Gets the visibility of the marker.
+     *
+     * @return This marker's visibility.
+     */
+    public boolean isVisible() {
+        return this.visibility;
+    }
+
+    /**
      * Show the entity on the map.
      */
     public void show() {
-        show = true;
+        visibility = true;
 
         // TODO implement
     }
@@ -61,7 +70,7 @@ public abstract class Entity {
      * Hides the entity from view.
      */
     public void hide() {
-        show = false;
+        visibility = false;
 
         // TODO implement
     }

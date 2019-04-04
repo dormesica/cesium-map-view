@@ -1,16 +1,24 @@
 package com.github.dormesica.mapcontroller.layers;
 
-public class VectorLayer {
+import android.webkit.ValueCallback;
 
-    private String id;
-    private Entity[] entities;
+import java.util.List;
 
-    public String getId() {
-        return id;
-    }
+/**
+ *
+ * @since 1.0.0
+ */
+public class VectorLayer extends Layer {
+
+    private List<Entity> entities;
 
     public Entity get(int i) {
-        return entities[i];
+        return entities.get(i);
+    }
+
+    @Override
+    public void remove(ValueCallback<Boolean> callback) {
+        // TODO implement
     }
 
     public void focus() {

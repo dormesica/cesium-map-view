@@ -1,6 +1,5 @@
 package com.github.dormesica.mapcontroller.layers;
 
-import androidx.annotation.NonNull;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 
 /**
@@ -13,20 +12,16 @@ import com.github.dormesica.mapcontroller.location.Coordinates;
 public class Point extends Entity {
 
     /**
-     * A format for the SVG of the default point icon.
+     * The default icon for point.
      * <p>
-     * Contains 2 open slots for string values, the first being the outline color and the second being the fill color.
+     * Shapes as a circle with black stroke color and white fill.
      */
-    public static final String DEFAULT_POINT_ICON_FORMAT = "data:image/svg+xml," +
+    public static final String DEFAULT_POINT_ICON = "data:image/svg+xml," +
             "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
             "xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" width=\"20px\" height=\"20px\" " +
             "xml:space=\"preserve\">" +
-            "<circle cx=\"10\" cy=\"10\" r=\"9\" stroke=\"%s\" stroke-width=\"3\" fill=\"%s\" />" +
+            "<circle cx=\"10\" cy=\"10\" r=\"9\" stroke=\"black\" stroke-width=\"3\" fill=\"white\" />" +
             "</svg>";
-    /**
-     * The default SVG for the point icon.
-     */
-    public static final String DEFAULT_POINT_ICON = String.format(DEFAULT_POINT_ICON_FORMAT, "black", "white");
 
     private Coordinates location;
 

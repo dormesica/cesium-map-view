@@ -24,3 +24,16 @@ export function convertDegreesToRadians(degrees) {
 
     return (degrees * Math.PI) / 180;
 }
+
+/**
+ * Maps the given coordinates from radians to degrees.
+ * @param {Coordinates} location The location to convert.
+ */
+export function mapRadianLocationToDegrees(location) {
+    return {
+        lon: convertRadiansToDegrees(location.longitude),
+        lat: convertRadiansToDegrees(location.latitude),
+        alt: location.height,
+    };
+}
+

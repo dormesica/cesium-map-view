@@ -1,6 +1,6 @@
 package com.github.dormesica.mapcontroller.layers;
 
-class LayerTypes {
+final class LayerTypes {
 
     static final String GeoJSON = "GeoJSON";
 }

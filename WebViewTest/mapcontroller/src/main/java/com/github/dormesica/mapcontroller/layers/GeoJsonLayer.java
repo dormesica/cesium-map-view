@@ -1,5 +1,6 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import com.github.dormesica.mapcontroller.util.JsonConverter;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 
@@ -70,7 +71,7 @@ public class GeoJsonLayer {
      */
     public static final class Builder {
 
-        private static final Gson sGson = new Gson();
+        private static final Gson sGson = JsonConverter.getConverter();
 
         private String geoJson;
         private URL url;
