@@ -38,7 +38,7 @@ class LayerManager {
 
         // TODO cannot be done here
         cesiumLayer
-            .then(() => CallbackSync.invoke(callbackId, layerId));
+            .then(layer => CallbackSync.invoke(callbackId, JSON.stringify({...layer, id: layerId})));
     }
 
     /**
@@ -74,9 +74,10 @@ class LayerManager {
      * Creates the layer in the view.
      * Should be implemented by any class that extends LayerManager.
      * @param {*} layer Layer descriptor
+     * @param {String} callbackId The Android callback to invoke.
      * @returns {*} Description to be saves about the layer.
      */
-    _createLayer(layer) {
+    _createLayer(layer, callbackId) {
         MapError.notImplementedError(this, '_createLayer');
     }
 

@@ -22,7 +22,7 @@ class VectorLayerManager extends LayerManager {
         super(mapComponent);
     }
 
-    _createLayer(layer) {
+    _createLayer(layer, callbackId) {
         switch (layer.type) {
             case VectorLayerManager.Types.GeoJSON:
                 return loadGeoJSON(this._mapComponent._viewer, layer);
@@ -54,27 +54,78 @@ function loadGeoJSON(viewer, options) {
         return Promise.reject('Malformed JSON object');
     }
 
-    const result = Cesium.GeoJsonDataSource.load(source, {
+    return Cesium.GeoJsonDataSource.load(source, {
         stroke: Cesium.Color.fromCssColorString(options.outlineColor).withAlpha(options.opacity),
         fill: Cesium.Color.fromCssColorString(options.color).withAlpha(options.opacity),
-    });
-    result.then(dataSource => {
-        viewer.dataSources.add(dataSource);
-        if (options.zoom) {
-            viewer.zoomTo(dataSource);
-        }
-
-        const entities = dataSource.entities.values;
-        entities.forEach(element => {
-            if (element.billboard) {
-                element.billboard.image = options.pointIcon;
-                element.billboard.heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
-                element.billboard.scaleByDistance = SCALING_DEFINIIONS;
+    })
+        .then(dataSource => {
+            viewer.dataSources.add(dataSource);
+            if (options.zoom) {
+                viewer.zoomTo(dataSource);
             }
-        });
-    });
 
-    return result;
+            dataSource.entities.values.forEach(element => handleStyle(element, options))
+
+            return dataSource.entities.values;
+        })
+        .then(entities => ({
+            points: entities.filter(element => element.billboard),
+            lines: entities.filter(element => element.polyline),
+            polygons: entities.filter(element => element.polygon),
+        }))
+        .then(groupsEntities => {
+            const layer = {
+                entities: [],
+            };
+
+            groupsEntities.points.forEach(element => {
+                const entity = {
+                    type: 'point',
+                    id: element.id,
+                    name: element.name,
+                    show: element.show,
+                    location: {
+                        lon: 34, lat: 35
+                    }
+                };
+
+                layer.entities.push(entity);                
+            });
+            groupsEntities.lines.forEach(element => {
+                const entity = {
+                    type: 'line',
+                    id: element.id,
+                    name: element.name,
+                    show: element.show,
+                };
+
+                layer.entities.push(entity);                
+            });
+            groupsEntities.polygons.forEach(element => {
+                const entity = {
+                    type: 'polygon',
+                    id: element.id,
+                    name: element.name,
+                    show: element.show,
+                };
+
+                layer.entities.push(entity);                
+            });
+
+            return layer;
+        });
+}
+
+function handleStyle(element, options) {
+    if (element.billboard) {
+        element.billboard.image = options.pointIcon;
+        element.billboard.heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
+        element.billboard.scaleByDistance = SCALING_DEFINIIONS;
+    } else if (element.polyline) {
+
+    } else if (element.polygon) {
+
+    }
 }
 
 export default VectorLayerManager;
