@@ -71,12 +71,6 @@ public class GeoJsonLayer {
     public static final class Builder {
 
         private static final Gson sGson = new Gson();
-        private static final String DEFAULT_POINT_ICON = "data:image/svg+xml," +
-                "<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" " +
-                "xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" width=\"20px\" height=\"20px\" " +
-                "xml:space=\"preserve\">" +
-                "<circle cx=\"10\" cy=\"10\" r=\"9\" stroke=\"black\" stroke-width=\"3\" fill=\"white\" />" +
-                "</svg>";
 
         private String geoJson;
         private URL url;
@@ -97,7 +91,7 @@ public class GeoJsonLayer {
             outlineColor = "#000000";
             outlineWidth = 2;
             opacity = 0.35;
-            pointIcon = DEFAULT_POINT_ICON;
+            pointIcon = Point.DEFAULT_POINT_ICON;
             zoom = false;
         }
 
@@ -209,11 +203,11 @@ public class GeoJsonLayer {
          * <p>
          * By default, the map does not zoom to the layer.
          *
-         * @param shouldZoom Should the map zoom to the layer after load has finished.
+         * @param shouldFocus Should the map zoom to the layer after load has finished.
          * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
          */
-        public Builder shouldZoom(boolean shouldZoom) {
-            this.zoom = shouldZoom;
+        public Builder shouldFocus(boolean shouldFocus) {
+            this.zoom = shouldFocus;
             return this;
         }
 
