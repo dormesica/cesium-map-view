@@ -4,6 +4,13 @@ import android.webkit.ValueCallback;
 import androidx.annotation.Nullable;
 
 /**
+ * This class represents a layer that was loaded on to a {@link com.github.dormesica.mapcontroller.widgets.MapView}.
+ * <p>
+ * Each layer is associated with a unique UUID.
+ * <p>
+ * <strong>Important:</strong> <code>Layer</code> subclasses represents layer that have been added to the map and
+ * therefore cannot be created directly.
+ *
  * @since 1.0.0
  */
 public abstract class Layer {

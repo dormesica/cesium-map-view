@@ -219,7 +219,7 @@ public class MapView extends FrameLayout {
      * @param layer    The layer to be loaded
      * @param callback a callback to be invoked with the layer ID when the operation completes.
      */
-    public void load(@NonNull GeoJsonLayer layer, @NonNull ValueCallback<VectorLayer> callback) {
+    public void load(@NonNull GeoJsonLayerDescriptor layer, @NonNull ValueCallback<VectorLayer> callback) {
         String callbackId = CallbackSync.getInstance().register((String layerJsonString) ->
                 callback.onReceiveValue(mGson.fromJson(layerJsonString, VectorLayer.class)));
         String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, mGson.toJson(layer), callbackId);

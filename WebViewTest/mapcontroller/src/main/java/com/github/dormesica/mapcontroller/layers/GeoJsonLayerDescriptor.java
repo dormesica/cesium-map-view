@@ -11,7 +11,7 @@ import java.net.URL;
  *
  * @since 1.0.0
  */
-public class GeoJsonLayer {
+public class GeoJsonLayerDescriptor {
 
     /**
      * A regular expression that matches CSS color strings.
@@ -34,7 +34,7 @@ public class GeoJsonLayer {
      * @param builder The builder from which to build the GeoJSON layer.
      * @throws IllegalArgumentException If an argument has an invalid value.
      */
-    private GeoJsonLayer(Builder builder) throws IllegalArgumentException {
+    private GeoJsonLayerDescriptor(Builder builder) throws IllegalArgumentException {
         Preconditions.checkArgument(builder.url != null || builder.geoJson != null,
                 "Either GeoJSON or a URL from which to retrieve a GeoJSON should be specified");
         Preconditions.checkArgument(builder.color.matches(COLOR_REGEX),
@@ -64,7 +64,7 @@ public class GeoJsonLayer {
     }
 
     /**
-     * <code>GeoJsonLayer.Builder</code> is a helper for creating {@link GeoJsonLayer} layers to be loaded onto
+     * <code>GeoJsonLayerDescriptor.Builder</code> is a helper for creating {@link GeoJsonLayerDescriptor} layers to be loaded onto
      * {@link com.github.dormesica.mapcontroller.widgets.MapView}.
      *
      * @since 1.0.0
@@ -83,7 +83,7 @@ public class GeoJsonLayer {
         private boolean zoom;
 
         /**
-         * Creates a new <code>GeoJsonLayer.Builder</code> instance.
+         * Creates a new <code>GeoJsonLayerDescriptor.Builder</code> instance.
          */
         private Builder() {
             geoJson = null;
@@ -97,7 +97,7 @@ public class GeoJsonLayer {
         }
 
         /**
-         * Creates a new <code>GeoJsonLayer.Builder</code> with the given serialized GeoJSON as the layer description.
+         * Creates a new <code>GeoJsonLayerDescriptor.Builder</code> with the given serialized GeoJSON as the layer description.
          *
          * @param geoJsonString Serialized GeoJSON object.
          * @return A new <code>GeoJSON.Builder</code> instance.
@@ -110,7 +110,7 @@ public class GeoJsonLayer {
         }
 
         /**
-         * Creates a new <code>GeoJsonLayer.Builder</code> with the given GeoJSON as the layer description.
+         * Creates a new <code>GeoJsonLayerDescriptor.Builder</code> with the given GeoJSON as the layer description.
          *
          * @param geoJson GeoJSON object.
          * @return A new <code>GeoJSON.Builder</code> instance.
@@ -123,7 +123,7 @@ public class GeoJsonLayer {
         }
 
         /**
-         * Creates a new <code>GeoJsonLayer.Builder</code> with the URL as the source from which the GeoJSON will be
+         * Creates a new <code>GeoJsonLayerDescriptor.Builder</code> with the URL as the source from which the GeoJSON will be
          * retrieved.
          *
          * @param url The URL source of the GeoJSON.
@@ -137,12 +137,12 @@ public class GeoJsonLayer {
         }
 
         /**
-         * Set the color of the geometries in the GeoJsonLayer.
+         * Set the color of the geometries in the GeoJsonLayerDescriptor.
          * <p>
          * The provided color must be a valid CSS color String.
          *
          * @param color The color of the geometries.
-         * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
+         * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
          */
         public Builder setColor(String color) {
             this.color = color;
@@ -155,7 +155,7 @@ public class GeoJsonLayer {
          * The provided color must be a valid CSS color string.
          *
          * @param outlineColor The color for the geometries' outline.
-         * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
+         * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
          */
         public Builder setOutlineColor(String outlineColor) {
             this.outlineColor = outlineColor;
@@ -166,7 +166,7 @@ public class GeoJsonLayer {
          * Set the pixel width of the geometries' outline.
          *
          * @param width Width in pixels.
-         * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
+         * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
          */
         public Builder setOutlineWidth(int width) {
             outlineWidth = width;
@@ -174,15 +174,15 @@ public class GeoJsonLayer {
         }
 
         /**
-         * Set the opacity for the geometries' color.
+         * Set the alpha value (opacity) for the geometries' color.
          * <p>
          * Must be a value between 0 and 1 inclusive.
          *
-         * @param opacity The opacity of the geometry.
-         * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
+         * @param alpha The opacity of the geometry.
+         * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
          */
-        public Builder setOpacity(double opacity) {
-            this.opacity = opacity;
+        public Builder setAlpha(double alpha) {
+            opacity = alpha;
             return this;
         }
 
@@ -192,7 +192,7 @@ public class GeoJsonLayer {
          * Can either be a URL to an online resource or a SVG uri e.g. {@code data:image/svg+xml,<svg>...</svg>}
          *
          * @param svg The SVG uri as a string.
-         * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
+         * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
          */
         public Builder setPointIcon(String svg) {
             pointIcon = svg;
@@ -205,7 +205,7 @@ public class GeoJsonLayer {
          * By default, the map does not zoom to the layer.
          *
          * @param shouldFocus Should the map zoom to the layer after load has finished.
-         * @return The <code>GeoJsonLayer.Builder</code> for method chaining.
+         * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
          */
         public Builder shouldFocus(boolean shouldFocus) {
             this.zoom = shouldFocus;
@@ -213,13 +213,13 @@ public class GeoJsonLayer {
         }
 
         /**
-         * Creates the {@link GeoJsonLayer} object.
+         * Creates the {@link GeoJsonLayerDescriptor} object.
          *
-         * @return The newly created {@link GeoJsonLayer}.
+         * @return The newly created {@link GeoJsonLayerDescriptor}.
          * @throws IllegalArgumentException In case
          */
-        public GeoJsonLayer build() throws IllegalArgumentException {
-            return new GeoJsonLayer(this);
+        public GeoJsonLayerDescriptor build() throws IllegalArgumentException {
+            return new GeoJsonLayerDescriptor(this);
         }
     }
 }

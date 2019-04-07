@@ -11,7 +11,8 @@ public abstract class Entity {
 
     private String id;
     private String name;
-    private boolean visibility;
+    private boolean isVisible;
+    // TODO add properties
 
     /**
      * Get the ID of the entity.
@@ -49,29 +50,41 @@ public abstract class Entity {
     }
 
     /**
-     * Gets the visibility of the marker.
+     * Get the isVisible of the marker.
      *
-     * @return This marker's visibility.
+     * @return This entity's isVisible.
      */
     public boolean isVisible() {
-        return this.visibility;
+        return isVisible;
     }
 
     /**
-     * Show the entity on the map.
+     * Sets the isVisible of the entity.
      */
-    public void show() {
-        visibility = true;
+    public void setVisible(boolean visible) {
+        isVisible = visible;
 
         // TODO implement
     }
 
     /**
-     * Hides the entity from view.
+     * Removes the entity from the map.
      */
-    public void hide() {
-        visibility = false;
+    public void remove() {}
 
-        // TODO implement
-    }
+    /**
+     * Set the color for the entity.
+     *
+     * @param color The color of the entity.
+     */
+    public void setColor(String color) {}
+
+    /**
+     * Set the opacity of the entity.
+     * <p>
+     * Opacity values are between 0 and 1, where 0 means the entity is transparent and 1 means opaque.
+     *
+     * @param alpha The opacity value.
+     */
+    public void setAlpha(double alpha) {}
 }

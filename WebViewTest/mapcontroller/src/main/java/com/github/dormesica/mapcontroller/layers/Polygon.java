@@ -16,4 +16,10 @@ public class Polygon extends Entity {
 
     private List<Coordinates> perimeter;
 //    private List<Polygon> holes; TODO needed?
+
+
+    @Override
+    public void remove() {
+        // TODO implement
+    }
 }
