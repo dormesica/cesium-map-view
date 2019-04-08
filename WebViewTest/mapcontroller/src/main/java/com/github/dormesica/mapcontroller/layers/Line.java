@@ -49,9 +49,4 @@ public class Line extends Entity {
     public int size() {
         return path.size();
     }
-
-    @Override
-    public void remove() {
-        // TODO implement
-    }
 }

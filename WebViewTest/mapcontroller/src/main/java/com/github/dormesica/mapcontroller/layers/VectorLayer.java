@@ -19,7 +19,18 @@ public class VectorLayer extends Layer {
     private List<Entity> entities;
     private boolean isVisible = true;
 
-    public Entity get(int i) {
+    /**
+     * Get the <code>i</code>-th entity of the layer.
+     *
+     * @param i Entity index.
+     * @return The <code>i</code>-th entity.
+     * @throws IndexOutOfBoundsException In case the index if greater than or equal to <code>VectorLayer.size()</code>.
+     */
+    public Entity get(int i) throws IndexOutOfBoundsException {
+        if (i >= entities.size()) {
+            throw new IndexOutOfBoundsException();
+        }
+
         return entities.get(i);
     }
 

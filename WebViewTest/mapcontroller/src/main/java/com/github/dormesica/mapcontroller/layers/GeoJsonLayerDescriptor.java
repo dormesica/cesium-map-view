@@ -1,5 +1,7 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import com.github.dormesica.mapcontroller.graphics.Color;
+import com.github.dormesica.mapcontroller.widgets.MapView;
 import com.github.dormesica.mapcontroller.util.JsonConverter;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
@@ -25,6 +27,7 @@ public class GeoJsonLayerDescriptor {
     private String outlineColor;
     private int outlineWidth;
     private double opacity;
+    private double outlineOpacity;
     private String pointIcon;
     private boolean zoom;
 
@@ -37,11 +40,9 @@ public class GeoJsonLayerDescriptor {
     private GeoJsonLayerDescriptor(Builder builder) throws IllegalArgumentException {
         Preconditions.checkArgument(builder.url != null || builder.geoJson != null,
                 "Either GeoJSON or a URL from which to retrieve a GeoJSON should be specified");
-        Preconditions.checkArgument(builder.color.matches(COLOR_REGEX),
-                color + " is not a valid color string");
-        Preconditions.checkArgument(builder.outlineColor.matches(COLOR_REGEX),
-                outlineColor + " is not a valid color string");
         Preconditions.checkArgument(0 <= builder.opacity && builder.opacity <= 1,
+                "Opacity must be a value between 0 and 1.");
+        Preconditions.checkArgument(0 <= builder.outlineOpacity && builder.outlineOpacity <= 1,
                 "Opacity must be a value between 0 and 1.");
         Preconditions.checkArgument(builder.outlineWidth > 0, "Outline width must be greater than 0");
 
@@ -49,7 +50,7 @@ public class GeoJsonLayerDescriptor {
         geoJson = null;
         if (builder.url != null) {
             url = builder.url.toString();
-        } else if (builder.geoJson != null) {
+        } else {
             geoJson = builder.geoJson;
         }
 
@@ -58,6 +59,7 @@ public class GeoJsonLayerDescriptor {
         color = builder.color;
         outlineColor = builder.outlineColor;
         opacity = builder.opacity;
+        outlineOpacity = builder.outlineOpacity;
         outlineWidth = builder.outlineWidth;
         pointIcon = builder.pointIcon;
         zoom = builder.zoom;
@@ -65,7 +67,7 @@ public class GeoJsonLayerDescriptor {
 
     /**
      * <code>GeoJsonLayerDescriptor.Builder</code> is a helper for creating {@link GeoJsonLayerDescriptor} layers to be loaded onto
-     * {@link com.github.dormesica.mapcontroller.widgets.MapView}.
+     * {@link MapView}.
      *
      * @since 1.0.0
      */
@@ -79,6 +81,7 @@ public class GeoJsonLayerDescriptor {
         private String outlineColor;
         private int outlineWidth;
         private double opacity;
+        private double outlineOpacity;
         private String pointIcon;
         private boolean zoom;
 
@@ -144,8 +147,9 @@ public class GeoJsonLayerDescriptor {
          * @param color The color of the geometries.
          * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
          */
-        public Builder setColor(String color) {
-            this.color = color;
+        public Builder setColor(Color color) {
+            this.color = color.getColorString();
+            this.opacity = color.alpha();
             return this;
         }
 
@@ -157,8 +161,9 @@ public class GeoJsonLayerDescriptor {
          * @param outlineColor The color for the geometries' outline.
          * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
          */
-        public Builder setOutlineColor(String outlineColor) {
-            this.outlineColor = outlineColor;
+        public Builder setOutlineColor(Color outlineColor) {
+            this.outlineColor = outlineColor.getColorString();
+            this.outlineOpacity = outlineColor.alpha();
             return this;
         }
 
@@ -183,6 +188,19 @@ public class GeoJsonLayerDescriptor {
          */
         public Builder setAlpha(double alpha) {
             opacity = alpha;
+            return this;
+        }
+
+        /**
+         * Set the alpha value (opacity) for the geometries' outlines.
+         * <p>
+         * Must be a value between 0 and 1 inclusive.
+         *
+         * @param alpha The opacity of the geometry.
+         * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
+         */
+        public Builder setOutlineAlpha(double alpha) {
+            this.outlineOpacity = alpha;
             return this;
         }
 

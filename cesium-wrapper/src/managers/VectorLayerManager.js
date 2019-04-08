@@ -56,7 +56,7 @@ function loadGeoJSON(viewer, options) {
     }
 
     return Cesium.GeoJsonDataSource.load(source, {
-        stroke: Cesium.Color.fromCssColorString(options.outlineColor).withAlpha(options.opacity),
+        stroke: Cesium.Color.fromCssColorString(options.outlineColor).withAlpha(options.outlineOpacity),
         fill: Cesium.Color.fromCssColorString(options.color).withAlpha(options.opacity),
     })
         .then(dataSource => {

@@ -33,9 +33,4 @@ public class Point extends Entity {
     public Coordinates getLocation() {
         return location;
     }
-
-    @Override
-    public void remove() {
-        // TODO implement
-    }
 }
