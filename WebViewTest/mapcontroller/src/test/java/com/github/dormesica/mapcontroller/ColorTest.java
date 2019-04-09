@@ -35,4 +35,16 @@ public class ColorTest {
 
         Assert.assertTrue(c.getColorString().equalsIgnoreCase("#EA3603"));
     }
+
+    @Test
+    public void changeChannelValue() {
+        Color c = new Color(COLOR_STRING, OPACITY);
+        Color newColor = c.setRed(0);
+
+        Assert.assertNotSame(c, newColor);
+        Assert.assertEquals(0, newColor.red());
+        Assert.assertEquals(c.green(), newColor.green());
+        Assert.assertEquals(c.blue(), newColor.blue());
+        Assert.assertEquals(c.alpha(), newColor.alpha(), 0.001);
+    }
 }

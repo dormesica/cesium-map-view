@@ -15,11 +15,6 @@ import java.net.URL;
  */
 public class GeoJsonLayerDescriptor {
 
-    /**
-     * A regular expression that matches CSS color strings.
-     */
-    private static final String COLOR_REGEX = "#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})";
-
     private String type;
     private String geoJson;
     private String url;
@@ -90,12 +85,14 @@ public class GeoJsonLayerDescriptor {
             color = "#FFFFFF";
             outlineColor = "#FFFFFF";
             opacity = 0.65;
+            outlineOpacity = 0.65;
             pointIcon = Point.DEFAULT_POINT_ICON;
             zoom = false;
         }
 
         /**
-         * Creates a new <code>GeoJsonLayerDescriptor.Builder</code> with the given serialized GeoJSON as the layer description.
+         * Creates a new <code>GeoJsonLayerDescriptor.Builder</code> with the given serialized GeoJSON as the layer
+         * description.
          *
          * @param geoJsonString Serialized GeoJSON object.
          * @return A new <code>GeoJSON.Builder</code> instance.
@@ -121,8 +118,8 @@ public class GeoJsonLayerDescriptor {
         }
 
         /**
-         * Creates a new <code>GeoJsonLayerDescriptor.Builder</code> with the URL as the source from which the GeoJSON will be
-         * retrieved.
+         * Creates a new <code>GeoJsonLayerDescriptor.Builder</code> with the URL as the source from which the
+         * GeoJSON will be retrieved.
          *
          * @param url The URL source of the GeoJSON.
          * @return A new <code>GeoJSON.Builder</code> instance.

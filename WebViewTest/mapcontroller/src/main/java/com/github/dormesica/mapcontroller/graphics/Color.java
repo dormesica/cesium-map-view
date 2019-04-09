@@ -1,17 +1,60 @@
 package com.github.dormesica.mapcontroller.graphics;
 
+import androidx.annotation.NonNull;
 import com.google.common.base.Preconditions;
 
 /**
+ * A Class that represents a color.
+ * <p>
+ * Instances of this class are immutable, i.e. any change to a property of the class creates a new object where all the
+ * values of the original object are copied save for the value that was meant to be changed.
+ * <p>
+ * Each color is represented using 3 integers as defined by the {@code RGB} format and a double value for the opacity.
+ *
  * @since 1.0.0
  */
 public class Color {
 
-    public static final Color BLACK = new Color(0, 0, 0, 0.35);
-    public static final Color WHITE = new Color(255, 255, 255, 0.35);
-    public static final Color RED = new Color(255, 0, 0, 0.35);
-    public static final Color GREEN = new Color(0, 255, 0, 0.35);
-    public static final Color BLUE = new Color(0, 0, 255, 0.35);
+    /**
+     * Constant value for transparent color.
+     */
+    public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
+    /**
+     * Constant value for black color.
+     */
+    public static final Color BLACK = new Color(0, 0, 0, 1);
+    /**
+     * Constant value for white color.
+     */
+    public static final Color WHITE = new Color(255, 255, 255, 1);
+    /**
+     * Constant value for red color.
+     */
+    public static final Color RED = new Color(255, 0, 0, 1);
+    /**
+     * Constant value for green color.
+     */
+    public static final Color GREEN = new Color(0, 255, 0, 1);
+    /**
+     * Constant value for blue color.
+     */
+    public static final Color BLUE = new Color(0, 0, 255, 1);
+    /**
+     * Constant value for cyan color.
+     */
+    public static final Color CYAN = new Color(0, 255, 255, 1);
+    /**
+     * Constant value for gray color.
+     */
+    public static final Color GRAY = new Color(128, 128, 128, 1);
+    /**
+     * Constant value for magenta color.
+     */
+    public static final Color MAGENTA = new Color(255, 0, 255, 1);
+    /**
+     * Constant value for yellow color.
+     */
+    public static final Color YELLOW = new Color(255, 255, 0, 1);
 
     /**
      * A regular expression that matches CSS color strings.
@@ -72,7 +115,7 @@ public class Color {
      * @param alpha       The opacity value.
      * @throws IllegalArgumentException In case a value does not meet the requirement above.
      */
-    public Color(String colorString, double alpha) throws IllegalArgumentException {
+    public Color(@NonNull String colorString, double alpha) throws IllegalArgumentException {
         checkColorString(colorString);
         checkAlphaValue(alpha);
 
@@ -126,6 +169,50 @@ public class Color {
     }
 
     /**
+     * Replaces the red channel value with the given value.
+     *
+     * @param red The new red value.
+     * @return A copy of the color with the red channel set to the given value.
+     */
+    public Color setRed(int red) {
+        checkColorValue(red);
+        return new Color(red, mGreen, mBlue, mAlpha);
+    }
+
+    /**
+     * Replaces the green channel value with the given value.
+     *
+     * @param green The new red value.
+     * @return A copy of the color with the green channel set to the given value.
+     */
+    public Color setGreen(int green) {
+        checkColorValue(green);
+        return new Color(mRed, green, mBlue, mAlpha);
+    }
+
+    /**
+     * Replaces the blue channel value with the given value.
+     *
+     * @param blue The new red value.
+     * @return A copy of the color with the blue channel set to the given value.
+     */
+    public Color setBlue(int blue) {
+        checkColorValue(blue);
+        return new Color(mRed, mGreen, blue, mAlpha);
+    }
+
+    /**
+     * Replaces the opacity value of the color.
+     *
+     * @param alpha The new opacity value.
+     * @return A copy of the color with the opacity value set to the given value.
+     */
+    public Color setAlpha(double alpha) {
+        checkAlphaValue(alpha);
+        return new Color(mRed, mGreen, mBlue, alpha);
+    }
+
+    /**
      * Get a CSS color string representation of the color.
      *
      * @return CSS color string representing the color.
@@ -176,7 +263,7 @@ public class Color {
      * @param color The color string to validate.
      * @throws IllegalArgumentException In case the value does not match the format.
      */
-    private static void checkColorString(String color) throws IllegalArgumentException {
+    private static void checkColorString(@NonNull String color) throws IllegalArgumentException {
         Preconditions.checkArgument(color.matches(COLOR_REGEX), color + " is not a valid color string");
     }
 }
