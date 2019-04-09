@@ -197,6 +197,24 @@ public class MapView extends FrameLayout {
     }
 
     /**
+     * Focuses the camera on the given entity.
+     *
+     * @param entity The entity on which to focus.
+     */
+    public void focusOn(@NonNull Entity entity) {
+        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, escapeString(entity.getId())), null);
+    }
+
+    /**
+     * Focuses the camera on the given layer.
+     *
+     * @param layer The layer on which to focus.
+     */
+    public void focusOn(@NonNull Layer layer) {
+        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, escapeString(layer.getId())), null);
+    }
+
+    /**
      * Asynchronously evaluates the extent of the current view. <code>callback</code> will be invoked
      * with a <code>Rectangle</code> that represents the current extent.
      *
@@ -227,12 +245,11 @@ public class MapView extends FrameLayout {
         mWebView.evaluateJavascript(script, null);
     }
 
-    // TODO test
     /**
      * Asynchronously removes a layer from the map. <code>callback</code> is invoked when the operation completes
      * with a boolean value that indicates whether the operation succeeded or not.
      *
-     * @param layerId The ID of the layer to be removed.
+     * @param layerId  The ID of the layer to be removed.
      * @param callback Called when the layer is removed or upon failure.
      */
     public void remove(@NonNull Layer layerId, ValueCallback<Boolean> callback) {
@@ -260,6 +277,18 @@ public class MapView extends FrameLayout {
         mWebView.addJavascriptInterface(CallbackSync.getInstance(), JS_INTERFACE_CALLBACK_SYNC);
 
         mWebView.loadUrl("file:///android_asset/index.html");
+    }
+
+    /**
+     * Encapsulates the given string within quote marks.
+     * <p>
+     * E.g. given the string {@code map}, the return value of the function is {@code "map"}.
+     *
+     * @param str The string to encapsulate.
+     * @return The given string surrounded with quote marks.
+     */
+    private static String escapeString(String str) {
+        return "\"" + str + "\"";
     }
 
     /**

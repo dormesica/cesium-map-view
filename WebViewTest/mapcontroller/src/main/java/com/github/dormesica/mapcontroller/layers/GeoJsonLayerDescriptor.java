@@ -89,7 +89,7 @@ public class GeoJsonLayerDescriptor {
             url = null;
             color = "#FFFFFF";
             outlineColor = "#FFFFFF";
-            opacity = 0.35;
+            opacity = 0.65;
             pointIcon = Point.DEFAULT_POINT_ICON;
             zoom = false;
         }
@@ -165,7 +165,7 @@ public class GeoJsonLayerDescriptor {
         /**
          * Set the alpha value (opacity) for the geometries' color.
          * <p>
-         * Must be a value between 0 and 1 inclusive.
+         * Must be a value between 0 and 1 inclusive. 0 being completely transparent and 1 being completely opaque.
          *
          * @param alpha The opacity of the geometry.
          * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.

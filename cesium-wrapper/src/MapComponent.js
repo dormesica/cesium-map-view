@@ -67,6 +67,10 @@ export default class MapComponent {
         const options = { duration: 1 };
         const locationHasOwnProperty = Object.prototype.hasOwnProperty.bind(location);
 
+        if (typeof location === 'string') {
+            return this._focusOnData(location, options);
+        }
+
         if (['lon', 'lat'].every(locationHasOwnProperty) && areCoordiantesValid(location)) {
             options.destination = Cesium.Cartesian3.fromDegrees(location.lon, location.lat, location.alt || 350);
         } else if (
@@ -90,19 +94,15 @@ export default class MapComponent {
      * Focuses the camera on the given data. 
      * Data can be a vector layer or an entity.
      * @param {string} dataId ID of the data
-     * @param {*} dataType The type of the data
+     * @param {object} options additional fly to options.
      */
-    focusOnData(dataId, dataType) {
-        let target = null;
-        if (dataType === 'entity' && this._featuresMap.has(dataId)) {
-           target = this._featuresMap.get(dataId); 
-        } else if (dataType === 'vector-layer' && this.vectorLayerManager.has(dataId)) {
-            target = this._vectorLayerManager.get(dataId);
-        } else {
-            throw MapError.invalidArgumentError('');
+    _focusOnData(dataId, options) {
+        const target = this._featuresMap.get(dataId) || this._vectorLayerManager.get(dataId);
+        if (!target) {
+            throw MapError.invalidArgumentError('No data with the given ID found');
         }
 
-        this._viewer.flyTo(target, { duration: 1 });
+        this._viewer.flyTo(target, options);
     }
 
     /**
