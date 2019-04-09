@@ -20,6 +20,22 @@ class LayerManager {
     }
 
     /**
+     * Returns if a layer is associates with the layerId.
+     * @param {string} layerId
+     */
+    has(layerId) {
+        return this._layers.has(layerId);
+    }
+
+    /**
+     * Get the layer associated with the given ID.
+     * @param {string} layerId
+     */
+    get(layerId) {
+        return this._layers.get(layerId);
+    }
+
+    /**
      * Adds the given layer to the viewer.
      * layer should be a cesium layer descriptor.
      * @param {*} layer Layer descriptior
@@ -34,11 +50,11 @@ class LayerManager {
             throw new MapError('Failed to create layer');
         }
 
-        this._layers.set(layerId, cesiumLayer);
-
         // TODO cannot be done here
-        cesiumLayer
-            .then(layer => CallbackSync.invoke(callbackId, JSON.stringify({...layer, id: layerId})));
+        cesiumLayer.then(({ layer, dataSource }) => {
+            this._layers.set(layerId, dataSource);
+            CallbackSync.invoke(callbackId, JSON.stringify({ ...layer, id: layerId }));
+        });
     }
 
     /**
@@ -51,16 +67,14 @@ class LayerManager {
             return;
         }
 
-        this._removeLayer(this._layers.get(layerId))
-            .then(success => {
-                let value = "false";
-                if (success) {
-                    this._layers.delete(layerId);
-                    value = "true";
-                }
+        var success = this._removeLayer(this._layers.get(layerId));
+        let value = 'false';
+        if (success) {
+            this._layers.delete(layerId);
+            value = 'true';
+        }
 
-                CallbackSync.invoke(callbackId, value);
-            });
+        CallbackSync.invoke(callbackId, value);
     }
 
     /**

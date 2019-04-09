@@ -25,7 +25,6 @@ public class GeoJsonLayerDescriptor {
     private String url;
     private String color;
     private String outlineColor;
-    private int outlineWidth;
     private double opacity;
     private double outlineOpacity;
     private String pointIcon;
@@ -44,7 +43,6 @@ public class GeoJsonLayerDescriptor {
                 "Opacity must be a value between 0 and 1.");
         Preconditions.checkArgument(0 <= builder.outlineOpacity && builder.outlineOpacity <= 1,
                 "Opacity must be a value between 0 and 1.");
-        Preconditions.checkArgument(builder.outlineWidth > 0, "Outline width must be greater than 0");
 
         url = null;
         geoJson = null;
@@ -60,7 +58,6 @@ public class GeoJsonLayerDescriptor {
         outlineColor = builder.outlineColor;
         opacity = builder.opacity;
         outlineOpacity = builder.outlineOpacity;
-        outlineWidth = builder.outlineWidth;
         pointIcon = builder.pointIcon;
         zoom = builder.zoom;
     }
@@ -79,7 +76,6 @@ public class GeoJsonLayerDescriptor {
         private URL url;
         private String color;
         private String outlineColor;
-        private int outlineWidth;
         private double opacity;
         private double outlineOpacity;
         private String pointIcon;
@@ -91,9 +87,8 @@ public class GeoJsonLayerDescriptor {
         private Builder() {
             geoJson = null;
             url = null;
-            color = "#000000";
-            outlineColor = "#000000";
-            outlineWidth = 2;
+            color = "#FFFFFF";
+            outlineColor = "#FFFFFF";
             opacity = 0.35;
             pointIcon = Point.DEFAULT_POINT_ICON;
             zoom = false;
@@ -164,17 +159,6 @@ public class GeoJsonLayerDescriptor {
         public Builder setOutlineColor(Color outlineColor) {
             this.outlineColor = outlineColor.getColorString();
             this.outlineOpacity = outlineColor.alpha();
-            return this;
-        }
-
-        /**
-         * Set the pixel width of the geometries' outline.
-         *
-         * @param width Width in pixels.
-         * @return The <code>GeoJsonLayerDescriptor.Builder</code> for method chaining.
-         */
-        public Builder setOutlineWidth(int width) {
-            outlineWidth = width;
             return this;
         }
 

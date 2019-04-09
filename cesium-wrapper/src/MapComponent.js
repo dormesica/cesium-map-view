@@ -35,6 +35,8 @@ export default class MapComponent {
         this._initializeMap();
         this._eventsHandler = new EventsHandler(this, 500);
         this._vectorLayerManager = new VectorLayerManager(this);
+
+        this._featuresMap = new Map();
     }
 
     get vectorLayerManager() {
@@ -82,6 +84,25 @@ export default class MapComponent {
         }
 
         this._viewer.camera.flyTo(options);
+    }
+
+    /**
+     * Focuses the camera on the given data. 
+     * Data can be a vector layer or an entity.
+     * @param {string} dataId ID of the data
+     * @param {*} dataType The type of the data
+     */
+    focusOnData(dataId, dataType) {
+        let target = null;
+        if (dataType === 'entity' && this._featuresMap.has(dataId)) {
+           target = this._featuresMap.get(dataId); 
+        } else if (dataType === 'vector-layer' && this.vectorLayerManager.has(dataId)) {
+            target = this._vectorLayerManager.get(dataId);
+        } else {
+            throw MapError.invalidArgumentError('');
+        }
+
+        this._viewer.flyTo(target, { duration: 1 });
     }
 
     /**
