@@ -88,10 +88,11 @@ class VectorLayerManager extends LayerManager {
                         type: 'point',
                         id: point.id,
                         name: point.name,
-                        visibility: point.show,
+                        isVisible: point.show,
                         location: mapRadianLocationToDegrees(
                             Cesium.Cartographic.fromCartesian(point.position.getValue())
                         ),
+                        properties: point.properties.getValue(),
                     })
                 );
                 groupsEntities.lines.forEach(line =>
@@ -99,11 +100,12 @@ class VectorLayerManager extends LayerManager {
                         type: 'line',
                         id: line.id,
                         name: line.name,
-                        visibility: line.show,
+                        isVisible: line.show,
                         path: line.polyline.positions
                             .getValue()
                             .map(pos => Cesium.Cartographic.fromCartesian(pos))
                             .map(mapRadianLocationToDegrees),
+                        properties: line.properties.getValue(),
                     })
                 );
                 groupsEntities.polygons.forEach(polygon =>
@@ -111,11 +113,12 @@ class VectorLayerManager extends LayerManager {
                         type: 'polygon',
                         id: polygon.id,
                         name: polygon.name,
-                        visibility: polygon.show,
+                        isVisible: polygon.show,
                         perimeter: polygon.polygon.hierarchy
                             .getValue()
                             .positions.map(pos => Cesium.Cartographic.fromCartesian(pos))
                             .map(mapRadianLocationToDegrees),
+                        properties: polygon.properties.getValue()
                     })
                 );
 

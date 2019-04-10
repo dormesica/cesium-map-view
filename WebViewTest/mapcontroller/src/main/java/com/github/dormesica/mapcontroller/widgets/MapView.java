@@ -184,7 +184,7 @@ public class MapView extends FrameLayout {
      * @param location The coordinates on which to focus.
      */
     public void focusOn(@NonNull Coordinates location) {
-        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, location), null);
+        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, mGson.toJson(location)), null);
     }
 
     /**
@@ -193,7 +193,7 @@ public class MapView extends FrameLayout {
      * @param extent The extent on which to focus
      */
     public void focusOn(@NonNull Rectangle extent) {
-        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, extent), null);
+        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, mGson.toJson(extent)), null);
     }
 
     /**
