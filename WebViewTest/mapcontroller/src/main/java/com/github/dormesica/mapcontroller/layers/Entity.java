@@ -12,7 +12,7 @@ public abstract class Entity {
     private String id;
     private String name;
     private boolean isVisible;
-    // TODO add properties
+    private Properties properties;
 
     /**
      * Get the ID of the entity.
@@ -33,23 +33,6 @@ public abstract class Entity {
     }
 
     /**
-     * Sets the name of the entity.
-     *
-     * @param name The new entity name.
-     */
-    public void setName(String name) {
-        this.name = name;
-        // TODO change name in Cesium?
-    }
-
-    /**
-     * Focuses the map on the entity.
-     */
-    public void focus() {
-        // TODO implement
-    }
-
-    /**
      * Get the isVisible of the marker.
      *
      * @return This entity's isVisible.
@@ -59,32 +42,11 @@ public abstract class Entity {
     }
 
     /**
-     * Sets the isVisible of the entity.
+     * Return a {@link Properties} object with the metadata associated with the entity.
+     *
+     * @return The properties of the entity.
      */
-    public void setVisible(boolean visible) {
-        isVisible = visible;
-
-        // TODO implement
+    public Properties getProperties() {
+        return this.properties;
     }
-
-    /**
-     * Removes the entity from the map.
-     */
-    public void remove() {}
-
-    /**
-     * Set the color for the entity.
-     *
-     * @param color The color of the entity.
-     */
-    public void setColor(String color) {}
-
-    /**
-     * Set the opacity of the entity.
-     * <p>
-     * Opacity values are between 0 and 1, where 0 means the entity is transparent and 1 means opaque.
-     *
-     * @param alpha The opacity value.
-     */
-    public void setAlpha(double alpha) {}
 }

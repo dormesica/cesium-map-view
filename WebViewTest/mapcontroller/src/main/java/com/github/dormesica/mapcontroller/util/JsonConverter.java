@@ -1,9 +1,6 @@
 package com.github.dormesica.mapcontroller.util;
 
-import com.github.dormesica.mapcontroller.layers.Entity;
-import com.github.dormesica.mapcontroller.layers.Line;
-import com.github.dormesica.mapcontroller.layers.Point;
-import com.github.dormesica.mapcontroller.layers.Polygon;
+import com.github.dormesica.mapcontroller.layers.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapterFactory;
@@ -18,6 +15,8 @@ import com.google.gson.TypeAdapterFactory;
  * <li>line - instance of {@link Line}</li>
  * <li>polygon - instance of {@link Polygon}</li>
  * </ul>
+ * <p>
+ * This class also supports converting a JSON to a {@link Properties} instance and vice-versa.
  *
  * @since 1.0.0
  */
@@ -33,6 +32,7 @@ public class JsonConverter {
 
         sConverter = new GsonBuilder()
                 .registerTypeAdapterFactory(entityAdapterFactory)
+                .registerTypeAdapter(Properties.class, new PropertiesTypeAdapter())
                 .create();
     }
 
