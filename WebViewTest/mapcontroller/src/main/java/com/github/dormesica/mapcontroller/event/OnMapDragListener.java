@@ -1,6 +1,6 @@
 package com.github.dormesica.mapcontroller.event;
 
-import com.github.dormesica.mapcontroller.widgets.MapView;
+import com.github.dormesica.mapcontroller.MapView;
 
 /**
  * Interface definition for a callback to be invoked when the map has been dragged.

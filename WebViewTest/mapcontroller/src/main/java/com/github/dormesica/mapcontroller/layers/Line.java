@@ -1,6 +1,8 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import com.github.dormesica.mapcontroller.StyleEditor;
 import com.github.dormesica.mapcontroller.location.Coordinates;
+import com.google.common.base.Preconditions;
 
 import java.util.List;
 
@@ -48,5 +50,28 @@ public class Line extends Entity {
      */
     public int size() {
         return path.size();
+    }
+
+    @Override
+    public StyleEditor edit() {
+        return new Editor();
+    }
+
+    /**
+     * @since 1.0.0
+     */
+    public class Editor extends Entity.Editor {
+        private Integer width;
+
+        protected Editor() {
+            super();
+        }
+
+        public Editor setWidth(int width) {
+            Preconditions.checkArgument(width > 0, "Line Width must be greater than 0.");
+
+            this.width = width;
+            return this;
+        }
     }
 }

@@ -1,5 +1,9 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import com.github.dormesica.mapcontroller.StyleEditor;
+import com.github.dormesica.mapcontroller.Styleable;
+import com.github.dormesica.mapcontroller.graphics.Color;
+
 /**
  * This class represents a basic entity in a vector layer.
  * <p>
@@ -7,7 +11,7 @@ package com.github.dormesica.mapcontroller.layers;
  *
  * @since 1.0.0
  */
-public abstract class Entity {
+public abstract class Entity implements Styleable {
 
     private String id;
     private String name;
@@ -33,6 +37,15 @@ public abstract class Entity {
     }
 
     /**
+     * Sets the name of the entity.
+     *
+     * @param name The new name for the entity.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Get the isVisible of the marker.
      *
      * @return This entity's isVisible.
@@ -48,5 +61,57 @@ public abstract class Entity {
      */
     public Properties getProperties() {
         return this.properties;
+    }
+
+    /**
+     * A class that represents the changes that should be made to an {@link Entity} on the map.
+     *
+     * @since 1.0.0
+     */
+    public abstract class Editor extends StyleEditor {
+        private Boolean isVisible;
+        private String color;
+        private double opacity;
+
+        /**
+         * Creates a new {@code Entity.Editor} object.
+         */
+        protected Editor() {
+            super(id);
+
+            isVisible = null;
+            String color = null;
+            opacity = -1;
+        }
+
+        /**
+         * Sets whether the entity should be visible after the update.
+         *
+         * @param visible The visibility of the entity.
+         * @return The {@code Entity.Editor} for method chaining.
+         */
+        public Editor setVisibility(boolean visible) {
+            this.isVisible = visible;
+            return this;
+        }
+
+        /**
+         * Sets the main color of the entity and its opacity.
+         *
+         * @param color The main color of the entity.
+         * @return The {@code Entity.Editor} for method chaining.
+         */
+        public Editor setColor(Color color) {
+            this.color = color.getColorString();
+            this.opacity = color.alpha();
+            return this;
+        }
+
+        @Override
+        public void onFinish(boolean success) {
+            if (success) {
+                Entity.this.isVisible = this.isVisible;
+            }
+        }
     }
 }

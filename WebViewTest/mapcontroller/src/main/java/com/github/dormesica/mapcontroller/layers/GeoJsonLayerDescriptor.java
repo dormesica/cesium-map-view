@@ -1,7 +1,7 @@
 package com.github.dormesica.mapcontroller.layers;
 
 import com.github.dormesica.mapcontroller.graphics.Color;
-import com.github.dormesica.mapcontroller.widgets.MapView;
+import com.github.dormesica.mapcontroller.MapView;
 import com.github.dormesica.mapcontroller.util.JsonConverter;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;

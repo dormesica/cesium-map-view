@@ -2,6 +2,8 @@ package com.github.dormesica.mapcontroller.layers;
 
 import com.github.dormesica.mapcontroller.location.Coordinates;
 
+import java.net.URL;
+
 /**
  * This class represents a point on the map.
  * <p>
@@ -25,6 +27,11 @@ public class Point extends Entity {
 
     private Coordinates location;
 
+    @Override
+    public Entity.Editor edit() {
+        return new Editor();
+    }
+
     /**
      * Get the Coordinates of the point.
      *
@@ -32,5 +39,45 @@ public class Point extends Entity {
      */
     public Coordinates getLocation() {
         return location;
+    }
+
+    /**
+     * A class that represents the changes that should be made to a {@link Point} on the map.
+     *
+     * @since 1.0.0
+     */
+    public class Editor extends Entity.Editor {
+        private String marker;
+
+        /**
+         * Creates a new {@code Point.Editor} object.
+         */
+        protected Editor() {
+            super();
+        }
+
+        /**
+         * Sets the display marker of the {@link Point} to the image located at the given URL.
+         *
+         * @param url The URL from which to retrieve the marker image.
+         * @return The {@code Point.Entity} for method Chaining.
+         */
+        public Editor setMarker(URL url) {
+            marker = url.toString();
+            return this;
+        }
+
+        /**
+         * Sets the display marker of the {@link Point} to the given SVG data URI.
+         * <p>
+         * The URI should be of the form: {@code data:image/svg+xml,<svg>...</svg>}
+         *
+         * @param svg SVG data URI for the marker.
+         * @return The {@code Point.Entity} for method Chaining.
+         */
+        public Editor setMarker(String svg) {
+            marker = svg;
+            return this;
+        }
     }
 }
