@@ -248,13 +248,13 @@ public class MapView extends FrameLayout {
      * Asynchronously removes a layer from the map. <code>callback</code> is invoked when the operation completes
      * with a boolean value that indicates whether the operation succeeded or not.
      *
-     * @param layerId  The ID of the layer to be removed.
+     * @param layer  The ID of the layer to be removed.
      * @param callback Called when the layer is removed or upon failure.
      */
-    public void remove(@NonNull Layer layerId, ValueCallback<Boolean> callback) {
+    public void remove(@NonNull Layer layer, ValueCallback<Boolean> callback) {
         String callbackId = CallbackSync.getInstance()
                 .register((String result) -> callback.onReceiveValue(result.equals("true")));
-        String script = String.format(SCRIPT_REMOVE_LAYER, JS_VECTOR_LAYER_MANAGER, layerId.getId(), callbackId);
+        String script = String.format(SCRIPT_REMOVE_LAYER, JS_VECTOR_LAYER_MANAGER, layer.getId(), callbackId);
 
         mWebView.evaluateJavascript(script, null);
     }

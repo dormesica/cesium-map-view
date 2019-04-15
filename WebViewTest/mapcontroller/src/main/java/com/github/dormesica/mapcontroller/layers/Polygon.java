@@ -50,6 +50,8 @@ public class Polygon extends Entity {
     }
 
     /**
+     * A class that represents the changes that can be made onto a {@link Polygon} on the map.
+     *
      * @since 1.0.0
      */
     public class Editor extends Entity.Editor {
@@ -74,22 +76,49 @@ public class Polygon extends Entity {
             width = null;
         }
 
+        /**
+         * Sets whether the polygon should contain fill color.
+         *
+         * @param hasFill Whether or not to contain fill color.
+         * @return The {@code Polygon.Entity} for method Chaining.
+         */
         public Editor hasFill(boolean hasFill) {
             this.hasFill = hasFill;
             return this;
         }
 
+        /**
+         * Sets whether or not the polygons outline should be visible.
+         *
+         * @param hasOutline Whether or not outline is visible.
+         * @return The {@code Polygon.Entity} for method Chaining.
+         */
         public Editor hasOutline(boolean hasOutline) {
             this.hasOutline = hasOutline;
             return this;
         }
 
+        /**
+         * Sets the color for the outline and it's opacity.
+         *
+         * @param color The color of the outline.
+         * @return The {@code Polygon.Entity} for method Chaining.
+         */
         public Editor setOutlineColor(Color color) {
             outlineColor = color.getColorString();
             outlineOpacity = color.alpha();
             return this;
         }
 
+        /**
+         * Sets the height of the polygon in meters.
+         * <p>
+         * I.e. polygons with {@code height > 0} are 3D shapes where the top face is {@code height} meters above the
+         * bottom face.
+         *
+         * @param height The height of the polygon.
+         * @return The {@code Polygon.Entity} for method Chaining.
+         */
         public Editor setHeight(double height) {
             Preconditions.checkArgument(height >= 0, "Polygon height must be at least 0.");
 
@@ -97,6 +126,12 @@ public class Polygon extends Entity {
             return this;
         }
 
+        /**
+         * Sets the width of the outline of the polygon.
+         *
+         * @param width The width of the polygon's outline.
+         * @return The {@code Polygon.Entity} for method Chaining.
+         */
         public Editor setWidth(int width) {
             Preconditions.checkArgument(width > 0, "Line Width must be greater than 0.");
 

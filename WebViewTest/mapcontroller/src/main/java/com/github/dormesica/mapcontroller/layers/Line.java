@@ -58,15 +58,26 @@ public class Line extends Entity {
     }
 
     /**
+     * A class that represents the changes that can be made onto a {@link Line} on the map.
+     *
      * @since 1.0.0
      */
     public class Editor extends Entity.Editor {
         private Integer width;
 
+        /**
+         * Creates a new {@code Line.Editor} object.
+         */
         protected Editor() {
             super();
         }
 
+        /**
+         * Sets the width of the line.
+         *
+         * @param width The width of the line.
+         * @return The {@code Point.Entity} for method Chaining.
+         */
         public Editor setWidth(int width) {
             Preconditions.checkArgument(width > 0, "Line Width must be greater than 0.");
 

@@ -64,7 +64,7 @@ public abstract class Entity implements Styleable {
     }
 
     /**
-     * A class that represents the changes that should be made to an {@link Entity} on the map.
+     * An abstract class that represents the changes that can be made onto any {@link Entity} on the map.
      *
      * @since 1.0.0
      */

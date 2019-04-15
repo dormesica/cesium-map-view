@@ -1,4 +1,4 @@
-import { areCoordiantesValid } from './utils/validation';
+import { areCoordiantesValid, hasValue } from './utils/validation';
 import MapError from './utils/MapError';
 import { convertRadiansToDegrees } from './utils/math';
 import EventsHandler from './EventsHandler';
@@ -91,21 +91,6 @@ export default class MapComponent {
     }
 
     /**
-     * Focuses the camera on the given data. 
-     * Data can be a vector layer or an entity.
-     * @param {string} dataId ID of the data
-     * @param {object} options additional fly to options.
-     */
-    _focusOnData(dataId, options) {
-        const target = this._featuresMap.get(dataId) || this._vectorLayerManager.get(dataId);
-        if (!target) {
-            throw MapError.invalidArgumentError('No data with the given ID found');
-        }
-
-        this._viewer.flyTo(target, options);
-    }
-
-    /**
      * Returns the extent of the current view.
      * @returns {Rectangle}
      */
@@ -146,6 +131,95 @@ export default class MapComponent {
             lat: Cesium.Math.toDegrees(geographicPosition.latitude),
             alt: geographicPosition.height,
         };
+    }
+
+    /**
+     * Changes the style of the entity with the given id.
+     * @param {string} id The ID of the entity.
+     * @param {*} options The new style of the entity.
+     */
+    changeEntityStyle(id, options) {
+        const entity = this._featuresMap.get(id);
+        if (!entity) {
+            return null;
+        }
+
+        if (hasValue(options.isvisible)) {
+            entity.show = options.isVisible;
+        }
+
+        if (entity.billboard) {
+            this._changePointStyle(entity, options);
+        } else if (entity.polyline) {
+            this._changePolylineStyle(entity, options);
+        } else if (entity.polygon) {
+            this._changePolygonStyle(entity, options);
+        }
+    }
+
+    _changePointStyle(point, options) {
+        const billboard = point.billboard;
+
+        if (options.pointIcon) {
+            billboard.image = options.pointIcon;
+        }
+        if (options.color) {
+            billboard.color = Cesium.Color.fromCssColorString(options.color).withAlpha(options.opacity);
+        }
+    }
+
+    _changePolylineStyle(entity, options) {
+        const polyline = entity.polyline;
+
+        if (options.color) {
+            polyline.material = Cesium.Color.fromCssColorString(options.color).withAlpha(options.opacity);
+        }
+        if (options.width) {
+            polyline.width = options.width;
+        }
+    }
+
+    _changePolygonStyle(entity, options) {
+        const polygon = entity.polygon;
+
+        if (hasValue(options.hasFill)) {
+            polygon.fill = options.hasFill;
+        }
+        if (options.color) {
+            polygon.material = Cesium.Color.fromCssColorString(options.color).withAlpha(options.opacity);
+        }
+
+        if (hasValue(options.hasOutline)) {
+            polygon.outline = options.hasOutline;
+        }
+        if (options.outlineColor) {
+            polygon.outlineColor = Cesium.Color.fromCssColorString(options.outlineColor).withAlpha(
+                options.outlineOpacity
+            );
+        }
+
+        if (hasValue(options.height)) {
+            polygon.extrudedHeight = options.height;
+        }
+
+        if (options.width) {
+            polygon.outlineWidth = options.width;
+        }
+    }
+
+    /**
+     * Focuses the camera on the given data.
+     * Data can be a vector layer or an entity.
+     * @param {string} dataId ID of the data
+     * @param {object} options additional fly to options.
+     */
+    _focusOnData(dataId, options) {
+        const target = this._featuresMap.get(dataId) || this._vectorLayerManager.get(dataId);
+        if (!target) {
+            throw MapError.invalidArgumentError('No data with the given ID found');
+        }
+
+        this._viewer.flyTo(target, options);
     }
 
     /**

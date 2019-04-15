@@ -1,12 +1,20 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import android.view.ViewGroup;
 import android.webkit.ValueCallback;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import com.github.dormesica.mapcontroller.MapView;
+import com.github.dormesica.mapcontroller.Styleable;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 
 /**
  * This class represents a vector layer that has been loaded on to a
- * {@link com.github.dormesica.mapcontroller.widgets.MapView}.
+ * {@link MapView}.
  * <p>
  * Vector layers are essentially a collection of geographically pinned entities. An entity can be attached with an
  * attribute table which provides metadata on it. These attribute tables are key-value pairs stored for a specific
@@ -14,7 +22,7 @@ import java.util.List;
  *
  * @since 1.0.0
  */
-public class VectorLayer extends Layer {
+public class VectorLayer extends Layer implements Iterable<Entity> { // TODO implement List<Entity>?
 
     private List<Entity> entities;
     private boolean isVisible = true;
@@ -34,36 +42,6 @@ public class VectorLayer extends Layer {
         return entities.get(i);
     }
 
-    @Override
-    public void remove(ValueCallback<Boolean> callback) {
-        // TODO implement
-    }
-
-    /**
-     * Focuses the <code>MapView</code> on the layer.
-     */
-    public void focus() {
-        // TODO implement
-    }
-
-    /**
-     * Gets the isVisible of the marker.
-     *
-     * @return This layers's isVisible.
-     */
-    public boolean isVisible() {
-        return isVisible;
-    }
-
-    /**
-     * Sets the isVisible of the entity.
-     */
-    public void setVisible(boolean visible) {
-        isVisible = visible;
-
-        // TODO implement
-    }
-
     /**
      * Returns the amount of entities in the layer.
      *
@@ -71,5 +49,39 @@ public class VectorLayer extends Layer {
      */
     public int size() {
         return entities.size();
+    }
+
+    @Override
+    public void forEach(Consumer<? super Entity> action) {
+        entities.forEach(action);
+    }
+
+    @Override
+    public Spliterator<Entity> spliterator() {
+        return entities.spliterator();
+    }
+
+    @NonNull
+    @Override
+    public Iterator<Entity> iterator() {
+        return entities.iterator();
+    }
+
+    /**
+     *
+     * @param <T>
+     * @since 1.0.0
+     */
+    public static abstract class Adapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
+        private List<Entity> entities;
+
+        public Adapter(VectorLayer layer) {
+            entities = layer.entities;
+        }
+
+        @Override
+        public int getItemCount() {
+            return entities.size();
+        }
     }
 }

@@ -42,7 +42,7 @@ public class Point extends Entity {
     }
 
     /**
-     * A class that represents the changes that should be made to a {@link Point} on the map.
+     * A class that represents the changes that can be made onto a {@link Point} on the map.
      *
      * @since 1.0.0
      */

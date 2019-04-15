@@ -33,3 +33,11 @@ export function checkAbstractConstructor(instance, abstractClass) {
     return instance.constructor === abstractClass;
 }
 
+/**
+ * Returns true if the value is a real value (no undefined or null).
+ * @param {*} val The value to check
+ */
+export function hasValue(val) {
+    return val !== undefined && val !== null;
+}
+
