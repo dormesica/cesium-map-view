@@ -1,5 +1,7 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 
 import java.net.URL;
@@ -12,6 +14,18 @@ import java.net.URL;
  * @since 1.0.0
  */
 public class Point extends Entity {
+
+    public static final Parcelable.Creator<Point> CREATOR = new Parcelable.Creator<Point>() {
+        @Override
+        public Point createFromParcel(Parcel source) {
+            return new Point(source);
+        }
+
+        @Override
+        public Point[] newArray(int size) {
+            return new Point[0];
+        }
+    };
 
     /**
      * The default icon for point.
@@ -27,6 +41,16 @@ public class Point extends Entity {
 
     private Coordinates location;
 
+    /**
+     * Creates a new {@code Point} from a {@link Parcel}.
+     *
+     * @param source The source Parcel.
+     */
+    private Point(Parcel source) {
+        super(source);
+        location = source.readParcelable(Coordinates.class.getClassLoader());
+    }
+
     @Override
     public Entity.Editor edit() {
         return new Editor();
@@ -39,6 +63,12 @@ public class Point extends Entity {
      */
     public Coordinates getLocation() {
         return location;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+        dest.writeParcelable(location, flags);
     }
 
     /**

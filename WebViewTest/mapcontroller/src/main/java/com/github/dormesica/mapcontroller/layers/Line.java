@@ -1,9 +1,12 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.github.dormesica.mapcontroller.StyleEditor;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 import com.google.common.base.Preconditions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +19,34 @@ import java.util.List;
  */
 public class Line extends Entity {
 
+    public static final Parcelable.Creator<Line> CREATOR = new Parcelable.Creator<Line>() {
+        @Override
+        public Line createFromParcel(Parcel source) {
+            return new Line(source);
+        }
+
+        @Override
+        public Line[] newArray(int size) {
+            return new Line[0];
+        }
+    };
+
     private List<Coordinates> path;
+
+    /**
+     * Creates a new {@code Line} object from a {@link Parcel}.
+     *
+     * @param source The source Parcel.
+     */
+    private Line(Parcel source) {
+        super(source);
+
+        int lineLength = source.readInt();
+        path = new ArrayList<>();
+        for (int i = 0; i < lineLength; i++) {
+            path.add(source.readParcelable(Coordinates.class.getClassLoader()));
+        }
+    }
 
     /**
      * Returns the i-th point along the line's path.
@@ -50,6 +80,17 @@ public class Line extends Entity {
      */
     public int size() {
         return path.size();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
+
+        int size = path.size();
+        dest.writeInt(size);
+        for (int i = 0; i < size; i++) {
+            dest.writeParcelable(path.get(i), flags);
+        }
     }
 
     @Override

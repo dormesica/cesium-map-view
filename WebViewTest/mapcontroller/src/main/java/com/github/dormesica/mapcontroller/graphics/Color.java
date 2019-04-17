@@ -1,5 +1,7 @@
 package com.github.dormesica.mapcontroller.graphics;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import com.google.common.base.Preconditions;
 
@@ -13,7 +15,19 @@ import com.google.common.base.Preconditions;
  *
  * @since 1.0.0
  */
-public class Color {
+public class Color implements Parcelable {
+
+    public static final Parcelable.Creator<Color> CREATOR = new Parcelable.Creator<Color>() {
+        @Override
+        public Color createFromParcel(Parcel source) {
+            return new Color(source);
+        }
+
+        @Override
+        public Color[] newArray(int size) {
+            return new Color[0];
+        }
+    };
 
     /**
      * Constant value for transparent color.
@@ -130,6 +144,18 @@ public class Color {
         }
 
         mAlpha = alpha;
+    }
+
+    /**
+     * Creates a new {@code Color} from a {@link Parcel}.
+     *
+     * @param source The source Parcel.
+     */
+    private Color(Parcel source) {
+        mRed = source.readInt();
+        mGreen = source.readInt();
+        mBlue = source.readInt();
+        mAlpha = source.readDouble();
     }
 
     /**
@@ -265,5 +291,18 @@ public class Color {
      */
     private static void checkColorString(@NonNull String color) throws IllegalArgumentException {
         Preconditions.checkArgument(color.matches(COLOR_REGEX), color + " is not a valid color string");
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mRed);
+        dest.writeInt(mGreen);
+        dest.writeInt(mBlue);
+        dest.writeDouble(mAlpha);
     }
 }

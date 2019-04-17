@@ -1,9 +1,12 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.github.dormesica.mapcontroller.graphics.Color;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 import com.google.common.base.Preconditions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +19,35 @@ import java.util.List;
  */
 public class Polygon extends Entity {
 
+    public static final Parcelable.Creator<Polygon> CREATOR = new Parcelable.Creator<Polygon>() {
+        @Override
+        public Polygon createFromParcel(Parcel source) {
+            return new Polygon(source);
+        }
+
+        @Override
+        public Polygon[] newArray(int size) {
+            return new Polygon[0];
+        }
+    };
+
     private List<Coordinates> perimeter;
 //    private List<Polygon> holes; TODO needed?
+
+    /**
+     * Creates a new {@code Polygon} from a {@link Parcel}.
+     *
+     * @param source The source Parcel.
+     */
+    private Polygon(Parcel source) {
+        super(source);
+
+        int perimeterLength = source.readInt();
+        perimeter = new ArrayList<>();
+        for (int i = 0; i < perimeterLength; i++) {
+            perimeter.add(source.readParcelable(Coordinates.class.getClassLoader()));
+        }
+    }
 
     /**
      * Calculates the perimeter of the polygon in meters. I.e. the total length of the line the surrounds the polygon.

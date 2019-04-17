@@ -1,5 +1,7 @@
 package com.github.dormesica.mapcontroller.location;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -13,7 +15,19 @@ import androidx.annotation.Nullable;
  *
  * @since 1.0.0
  */
-public class Rectangle {
+public class Rectangle implements Parcelable {
+
+    public static final Parcelable.Creator<Rectangle> CREATOR = new Parcelable.Creator<Rectangle>() {
+        @Override
+        public Rectangle createFromParcel(Parcel source) {
+            return new Rectangle(source);
+        }
+
+        @Override
+        public Rectangle[] newArray(int size) {
+            return new Rectangle[0];
+        }
+    };
 
     private Coordinates northWest;
     private Coordinates southEast;
@@ -43,6 +57,15 @@ public class Rectangle {
     }
 
     /**
+     * Creates a new {@code Rectangle} object from a {@link Parcel}.
+     * @param source The source Parcel.
+     */
+    private Rectangle(Parcel source) {
+        northWest = source.readParcelable(Coordinates.class.getClassLoader());
+        southEast = source.readParcelable(Coordinates.class.getClassLoader());
+    }
+
+    /**
      * Returns the north-west (top-left) corner of the rectangle.
      *
      * @return The north-west (top-left) corner of the rectangle.
@@ -58,6 +81,17 @@ public class Rectangle {
      */
     public Coordinates getSouthEast() {
         return southEast;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(northWest, flags);
+        dest.writeParcelable(southEast, flags);
     }
 
     @Override

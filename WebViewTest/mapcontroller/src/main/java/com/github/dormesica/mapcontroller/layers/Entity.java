@@ -1,5 +1,7 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.github.dormesica.mapcontroller.StyleEditor;
 import com.github.dormesica.mapcontroller.Styleable;
 import com.github.dormesica.mapcontroller.graphics.Color;
@@ -11,12 +13,30 @@ import com.github.dormesica.mapcontroller.graphics.Color;
  *
  * @since 1.0.0
  */
-public abstract class Entity implements Styleable {
+public abstract class Entity implements Styleable, Parcelable {
 
     private String id;
     private String name;
     private boolean isVisible;
     private Properties properties;
+
+    /**
+     * Creates a new {@code Entity} object with default values.
+     */
+    protected Entity() {
+    }
+
+    /**
+     * Creates a new {@code Entity} from a {@link Parcel}.
+     *
+     * @param source The source Parcel.
+     */
+    protected Entity(Parcel source) {
+        id = source.readString();
+        name = source.readString();
+        isVisible = source.readByte() != 0;
+        properties = source.readParcelable(Properties.class.getClassLoader());
+    }
 
     /**
      * Get the ID of the entity.
@@ -61,6 +81,19 @@ public abstract class Entity implements Styleable {
      */
     public Properties getProperties() {
         return this.properties;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeByte((byte) (isVisible ? 1 : 0));
+        dest.writeParcelable(properties, flags);
     }
 
     /**

@@ -1,8 +1,11 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.github.dormesica.mapcontroller.util.JsonConverter;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 
@@ -19,7 +22,19 @@ import java.util.function.Consumer;
  *
  * @since 1.0.0
  */
-public class Properties implements Iterable<Map.Entry<String, JsonElement>> {
+public class Properties implements Iterable<Map.Entry<String, JsonElement>>, Parcelable {
+
+    public static final Parcelable.Creator<Properties> CREATOR = new Parcelable.Creator<Properties>() {
+        @Override
+        public Properties createFromParcel(Parcel source) {
+            return new Properties(source);
+        }
+
+        @Override
+        public Properties[] newArray(int size) {
+            return new Properties[0];
+        }
+    };
 
     private Map<String, JsonElement> properties;
 
@@ -31,6 +46,26 @@ public class Properties implements Iterable<Map.Entry<String, JsonElement>> {
      */
     public Properties(@Nullable Map<String, JsonElement> properties) {
         this.properties = Collections.unmodifiableMap(properties);
+    }
+
+    /**
+     * Creates a new {@code Properties} object from a {@link Parcel}.
+     * @param source The source Parcel.
+     */
+    private Properties(Parcel source) {
+        Gson converter = JsonConverter.getConverter();
+
+        int size = source.readInt();
+
+        for (int i = 0; i < size; i++) {
+            String key = source.readString();
+            if (key == null) {
+                break; // TODO or throw?
+            }
+            String value = source.readString();
+
+            properties.put(key, converter.fromJson(value, JsonElement.class));
+        }
     }
 
     /**
@@ -153,6 +188,21 @@ public class Properties implements Iterable<Map.Entry<String, JsonElement>> {
      */
     public Collection<JsonElement> values() {
         return properties.values();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(properties.size());
+
+        properties.forEach((key, value) -> {
+            dest.writeString(key);
+            dest.writeString(value.toString());
+        });
     }
 
     @NonNull
