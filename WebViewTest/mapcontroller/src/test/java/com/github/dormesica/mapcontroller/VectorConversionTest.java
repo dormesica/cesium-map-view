@@ -79,8 +79,6 @@ public class VectorConversionTest {
         Assert.assertTrue(layer.get(0) instanceof Point);
         Assert.assertTrue(layer.get(1) instanceof Line);
         Assert.assertTrue(layer.get(2) instanceof Polygon);
-
-        // TODO finish
     }
 
     private void basicEntityTests(Entity entity, String expectedId) {

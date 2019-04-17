@@ -1,5 +1,7 @@
 package com.github.dormesica.mapcontroller.layers;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.github.dormesica.mapcontroller.MapView;
 
 /**
@@ -12,9 +14,25 @@ import com.github.dormesica.mapcontroller.MapView;
  *
  * @since 1.0.0
  */
-public abstract class Layer {
+public abstract class Layer implements Parcelable {
 
     private String id;
+
+    /**
+     * Creates a new {@code Layer} object with default values.
+     */
+    protected Layer() {
+
+    }
+
+    /**
+     * Creates a new {@code Layer} object from a {@link Parcel}.
+     *
+     * @param source The source Parcel.
+     */
+    protected Layer(Parcel source) {
+        id = source.readString();
+    }
 
     /**
      * Get the ID of the layer.
@@ -23,5 +41,15 @@ public abstract class Layer {
      */
     public String getId() {
         return this.id;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
     }
 }

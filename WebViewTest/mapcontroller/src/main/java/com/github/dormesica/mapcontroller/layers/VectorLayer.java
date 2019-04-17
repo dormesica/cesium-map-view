@@ -1,12 +1,11 @@
 package com.github.dormesica.mapcontroller.layers;
 
-import android.view.ViewGroup;
-import android.webkit.ValueCallback;
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import com.github.dormesica.mapcontroller.MapView;
-import com.github.dormesica.mapcontroller.Styleable;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Spliterator;
@@ -24,8 +23,31 @@ import java.util.function.Consumer;
  */
 public class VectorLayer extends Layer implements Iterable<Entity> { // TODO implement List<Entity>?
 
+    public static final Parcelable.Creator<VectorLayer> CREATOR = new Parcelable.Creator<VectorLayer>() {
+        @Override
+        public VectorLayer createFromParcel(Parcel source) {
+            return new VectorLayer(source);
+        }
+
+        @Override
+        public VectorLayer[] newArray(int size) {
+            return new VectorLayer[0];
+        }
+    };
+
     private List<Entity> entities;
-    private boolean isVisible = true;
+    private boolean isVisible;
+
+    private VectorLayer(Parcel source) {
+        super(source);
+
+        isVisible = source.readByte() != 0;
+        entities = new ArrayList<>();
+        int size = source.readInt();
+        for (int i = 0; i < size; i++) {
+            entities.add(source.readParcelable(Entity.class.getClassLoader()));
+        }
+    }
 
     /**
      * Get the <code>i</code>-th entity of the layer.
@@ -67,21 +89,18 @@ public class VectorLayer extends Layer implements Iterable<Entity> { // TODO imp
         return entities.iterator();
     }
 
-    /**
-     *
-     * @param <T>
-     * @since 1.0.0
-     */
-    public static abstract class Adapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
-        private List<Entity> entities;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
 
-        public Adapter(VectorLayer layer) {
-            entities = layer.entities;
-        }
+        dest.writeByte((byte) (isVisible ? 1 : 0));
 
-        @Override
-        public int getItemCount() {
-            return entities.size();
+        int size = entities.size();
+        dest.writeInt(size);
+
+        for (int i = 0; i < size; i++) {
+            Entity entity = entities.get(i);
+            dest.writeParcelable(entity, entity.describeContents());
         }
     }
 }
