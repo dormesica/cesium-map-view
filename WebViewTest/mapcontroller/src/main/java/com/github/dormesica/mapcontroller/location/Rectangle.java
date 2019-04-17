@@ -47,9 +47,9 @@ public class Rectangle implements Parcelable {
      * Creates a new <code>Rectangle</code> instance.
      *
      * @param north The north latitude of the rectangle.
-     * @param west The west longitude of the rectangle.
+     * @param west  The west longitude of the rectangle.
      * @param south The south latitude of the rectangle.
-     * @param east The east longitude of the rectangle.
+     * @param east  The east longitude of the rectangle.
      */
     public Rectangle(double north, double west, double south, double east) {
         this.northWest = new Coordinates(west, north);
@@ -58,6 +58,7 @@ public class Rectangle implements Parcelable {
 
     /**
      * Creates a new {@code Rectangle} object from a {@link Parcel}.
+     *
      * @param source The source Parcel.
      */
     private Rectangle(Parcel source) {
@@ -83,6 +84,42 @@ public class Rectangle implements Parcelable {
         return southEast;
     }
 
+    /**
+     * Returns the north latitude value of the rectangle.
+     *
+     * @return The north value.
+     */
+    public double getNorth() {
+        return northWest.getLat();
+    }
+
+    /**
+     * Returns the south latitude value of the rectangle.
+     *
+     * @return The south value.
+     */
+    public double getSouth() {
+        return southEast.getLat();
+    }
+
+    /**
+     * Return the east longitude value of the rectangle.
+     *
+     * @return The east value.
+     */
+    public double getEast() {
+        return southEast.getLon();
+    }
+
+    /**
+     * Returns the west longitude value of the rectangle.
+     *
+     * @return The west value.
+     */
+    public double getWest() {
+        return northWest.getLon();
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -101,7 +138,7 @@ public class Rectangle implements Parcelable {
         }
 
         if (obj == null) {
-            return true;
+            return false;
         }
 
         if (getClass() != obj.getClass()) {

@@ -55,8 +55,8 @@ public class Properties implements Iterable<Map.Entry<String, JsonElement>>, Par
     private Properties(Parcel source) {
         Gson converter = JsonConverter.getConverter();
 
+        properties = new HashMap<>();
         int size = source.readInt();
-
         for (int i = 0; i < size; i++) {
             String key = source.readString();
             if (key == null) {
@@ -203,6 +203,40 @@ public class Properties implements Iterable<Map.Entry<String, JsonElement>>, Par
             dest.writeString(key);
             dest.writeString(value.toString());
         });
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Set<String> keys = keySet();
+        Properties other = (Properties) obj;
+        if (!other.keySet().equals(keySet())) {
+            return false;
+        }
+
+        for (String key : keys) {
+            JsonElement value = properties.get(key);
+            JsonElement otherValue = other.properties.get(key);
+            if (value == null && otherValue == null) {
+                continue;
+            }
+            if (value == null || !value.equals(otherValue)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @NonNull

@@ -247,6 +247,19 @@ public class Color implements Parcelable {
         return "#" + getChannelHexValue(mRed) + getChannelHexValue(mGreen) + getChannelHexValue(mBlue);
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mRed);
+        dest.writeInt(mGreen);
+        dest.writeInt(mBlue);
+        dest.writeDouble(mAlpha);
+    }
+
     /**
      * Converts a single channel value to hexadecimal.
      *
@@ -291,18 +304,5 @@ public class Color implements Parcelable {
      */
     private static void checkColorString(@NonNull String color) throws IllegalArgumentException {
         Preconditions.checkArgument(color.matches(COLOR_REGEX), color + " is not a valid color string");
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mRed);
-        dest.writeInt(mGreen);
-        dest.writeInt(mBlue);
-        dest.writeDouble(mAlpha);
     }
 }
