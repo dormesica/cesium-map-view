@@ -35,6 +35,8 @@ public class VectorLayer extends Layer implements Iterable<Entity> { // TODO imp
         }
     };
 
+    private String name;
+    private String description;
     private List<Entity> entities;
     private boolean isVisible;
 
@@ -47,6 +49,9 @@ public class VectorLayer extends Layer implements Iterable<Entity> { // TODO imp
         super(source);
 
         isVisible = source.readByte() != 0;
+        name = source.readString();
+        description = source.readString();
+
         entities = new ArrayList<>();
         int size = source.readInt();
         for (int i = 0; i < size; i++) {
@@ -67,6 +72,46 @@ public class VectorLayer extends Layer implements Iterable<Entity> { // TODO imp
         }
 
         return entities.get(i);
+    }
+
+    /**
+     * Returns the layer's name.
+     * @return The layer's name.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name of the layer.
+     * @param name The name for the layer.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the layer's description.
+     * @return The layer's description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description of the layer.
+     * @param description The description for the layer.
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * Returns {@code true} if the layer is visible, otherwise returns {@code false}.
+     * @return The layer's visibility.
+     */
+    public boolean isVisible() {
+        return isVisible;
     }
 
     /**
@@ -99,6 +144,8 @@ public class VectorLayer extends Layer implements Iterable<Entity> { // TODO imp
         super.writeToParcel(dest, flags);
 
         dest.writeByte((byte) (isVisible ? 1 : 0));
+        dest.writeString(name);
+        dest.writeString(description);
 
         int size = entities.size();
         dest.writeInt(size);

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/vector_layers_display"
+            android:title="@string/nav_layers_list_title"/>
+        <item
+            android:id="@+id/raster_layers_display"
+            android:title="@string/nav_maps_list_title" />
+    </group>
+</menu>

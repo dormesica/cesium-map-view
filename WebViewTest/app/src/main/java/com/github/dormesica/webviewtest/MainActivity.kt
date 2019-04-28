@@ -1,36 +1,38 @@
 package com.github.dormesica.webviewtest
 
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
 import com.github.dormesica.mapcontroller.location.Rectangle
 import com.github.dormesica.mapcontroller.MapView
 import com.github.dormesica.mapcontroller.event.MapClickEvent
-import com.github.dormesica.mapcontroller.event.OnMapReadyListener
+import com.github.dormesica.mapcontroller.event.MapTouchEvent
 import com.github.dormesica.mapcontroller.layers.GeoJsonLayerDescriptor
-import com.github.dormesica.mapcontroller.layers.Layer
+import com.github.dormesica.mapcontroller.layers.VectorLayer
 import com.github.dormesica.mapcontroller.location.Coordinates
+import com.google.android.material.navigation.NavigationView
 
-class MainActivity : FragmentActivity(), OnMapReadyListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var mEventDisplayTextView: TextView
-    private lateinit var mButton: Button
+    private val layersList: ArrayList<VectorLayer> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
         WebView.setWebContentsDebuggingEnabled(true)
 
-        mEventDisplayTextView = findViewById(R.id.event_display)
-        mButton = findViewById(R.id.extent_button)
-    }
+        val mapView: MapView = findViewById(R.id.cesium_map_view)
+        val eventsDisplay: TextView = findViewById(R.id.event_display)
 
-    override fun onMapReady(mapView: MapView) {
-        var layerId: Layer? = null
         mapView.setOnMapReadyListener {
             Toast.makeText(this, "Map Ready", Toast.LENGTH_SHORT).show()
 
@@ -41,35 +43,43 @@ class MainActivity : FragmentActivity(), OnMapReadyListener {
                 .build()
 
             mapView.load(geoJson) {
-                layerId = it
+                it.name = "שכבה מדומת"
+                it.description = "שכבה המתארת מבנים בשכונת נוה הדרים בראשון לציון בה גר דור מסיקה המלך"
+                layersList.add(it)
             }
         }
         mapView.setOnMapClickListener { map: MapView, data: MapClickEvent ->
-            mEventDisplayTextView.text = getString(R.string.click_event_text, data.location.toString())
+            eventsDisplay.text = getString(R.string.click_event_text, data.location.toString())
             map.focusOn(data.location)
         }
         mapView.setOnMapLongClickListener { map: MapView, data: MapClickEvent ->
-            mEventDisplayTextView.text = getString(R.string.long_click_event_text, data.location.toString())
+            eventsDisplay.text = getString(R.string.long_click_event_text, data.location.toString())
             map.focusOn(Rectangle(Coordinates(180.0, 90.0), Coordinates(0.0, 0.0)))
         }
-//        cesiumMapView.setOnMapDragListener { mapView: CesiumMapView, data: MapDragEvent ->
-//            eventsDisplay.text = getString(R.string.drag_event_text,
-//                data.startLocation.toString(), data.endLocation.toString())
-//        }
-        mapView.setOnMapTouchListener { _, data ->
-            mEventDisplayTextView.text = getString(R.string.touch_event_text, data.type, data.location)
+        mapView.setOnMapTouchListener { _, data: MapTouchEvent ->
+            eventsDisplay.text = getString(R.string.touch_event_text, data.type, data.location)
         }
 
-        mButton.setOnClickListener {
+        val button: Button = findViewById(R.id.extent_button)
+        button.setOnClickListener {
             mapView.getViewExtent {
-                mEventDisplayTextView.text = it.toString()
+                eventsDisplay.text = it.toString()
             }
-            val layer = layerId
-            if (layer == null) return@setOnClickListener
-//            mapView.remove(layer) {
-//                Log.d("LayerRemoved", it.toString())
-//            }
-            mapView.focusOn(layer)
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.vector_layers_display -> {
+                val startLayerIntent = Intent(this, DisplayLayersActivity::class.java)
+                startLayerIntent.putParcelableArrayListExtra(DisplayLayersActivity.EXTRA_LAYER_LIST, layersList)
+                startActivity(startLayerIntent)
+                true
+            }
+            R.id.raster_layers_display -> {
+                true
+            }
+            else -> false
         }
     }
 }

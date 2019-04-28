@@ -8,4 +8,7 @@
     <string name="touch_event_text">Touch of type: %1$d! at: %2$s!</string>
 
     <string name="button_text">Evaluate extent</string>
+
+    <string name="nav_layers_list_title">Layers</string>
+    <string name="nav_maps_list_title">Maps</string>
 </resources>
