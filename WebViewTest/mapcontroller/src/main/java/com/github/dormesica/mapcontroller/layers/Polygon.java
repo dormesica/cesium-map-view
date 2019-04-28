@@ -76,7 +76,7 @@ public class Polygon extends Entity {
 
     @Override
     public Editor edit() {
-        return new Editor();
+        return new Editor(getId());
     }
 
     /**
@@ -84,26 +84,51 @@ public class Polygon extends Entity {
      *
      * @since 1.0.0
      */
-    public class Editor extends Entity.Editor {
-        private Boolean hasFill;
-        private Boolean hasOutline;
-        private String outlineColor;
-        private double outlineOpacity;
-        private Double height;
-        private Integer width;
+    public static class Editor extends Entity.Editor {
+        public static final Parcelable.Creator<Editor> CREATOR = new Parcelable.Creator<Editor>() {
+            @Override
+            public Editor createFromParcel(Parcel source) {
+                return new Editor(source);
+            }
+
+            @Override
+            public Editor[] newArray(int size) {
+                return new Editor[0];
+            }
+        };
+
+        private Boolean hasFill = null;
+        private Boolean hasOutline = null;
+        private String outlineColor = null;
+        private double outlineOpacity = Double.NaN;
+        private double height = Double.NaN;
+        private int width = Integer.MIN_VALUE;
 
         /**
          * Creates a new {@code Polygon.Editor} object.
          */
-        protected Editor() {
-            super();
+        protected Editor(String id) {
+            super(id);
+        }
 
-            hasFill = null;
-            hasOutline = null;
-            outlineColor = null;
-            outlineOpacity = -1;
-            height = null;
-            width = null;
+        /**
+         * Creates a new {@code Polygon.Editor} object from a {@link Parcel}.
+         *
+         * @param source The source Parcel.
+         */
+        protected Editor(Parcel source) {
+            super(source);
+
+            int hasFill = source.readInt();
+            this.hasFill = hasFill == -1 ? null : hasFill != 0;
+
+            int hasOutline = source.readInt();
+            this.hasOutline = hasOutline == -1 ? null : hasOutline != 0;
+
+            outlineColor = source.readString();
+            outlineOpacity = source.readDouble();
+            height = source.readDouble();
+            width = source.readInt();
         }
 
         /**
@@ -167,6 +192,26 @@ public class Polygon extends Entity {
 
             this.width = width;
             return this;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+
+            if (hasFill == null) {
+                dest.writeInt(-1);
+            } else {
+                dest.writeInt(hasFill ? 1 : 0);
+            }
+            if (hasOutline == null) {
+                dest.writeInt(-1);
+            } else {
+                dest.writeInt(hasOutline ? 1 : 0);
+            }
+            dest.writeString(outlineColor);
+            dest.writeDouble(outlineOpacity);
+            dest.writeDouble(height);
+            dest.writeInt(width);
         }
     }
 }

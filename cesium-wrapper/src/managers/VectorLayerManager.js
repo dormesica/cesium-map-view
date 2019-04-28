@@ -35,6 +35,10 @@ class VectorLayerManager extends LayerManager {
     }
 
     _removeLayer(layer) {
+        layer.dataSource.entities.values.  // TODO test
+            map(element => element.id).
+            forEach(id => mapComponent._featuresMap.delete(id));
+
         return this._mapComponent._viewer.dataSources.remove(layer, true);
     }
 

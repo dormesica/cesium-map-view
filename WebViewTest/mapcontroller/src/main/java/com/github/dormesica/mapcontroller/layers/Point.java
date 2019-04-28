@@ -52,8 +52,8 @@ public class Point extends Entity {
     }
 
     @Override
-    public Entity.Editor edit() {
-        return new Editor();
+    public Editor edit() {
+        return new Editor(getId());
     }
 
     /**
@@ -76,14 +76,37 @@ public class Point extends Entity {
      *
      * @since 1.0.0
      */
-    public class Editor extends Entity.Editor {
+    public static class Editor extends Entity.Editor {
+        public static final Parcelable.Creator<Editor> CREATOR = new Parcelable.Creator<Editor>() {
+            @Override
+            public Editor createFromParcel(Parcel source) {
+                return new Editor(source);
+            }
+
+            @Override
+            public Editor[] newArray(int size) {
+                return new Editor[0];
+            }
+        };
+
         private String marker;
 
         /**
          * Creates a new {@code Point.Editor} object.
          */
-        protected Editor() {
-            super();
+        protected Editor(String id) {
+            super(id);
+        }
+
+        /**
+         * Creates a new {@code Point.Editor} object from a {@link Parcel}.
+         *
+         * @param source The source Parcel.
+         */
+        protected Editor(Parcel source) {
+            super(source);
+
+            marker = source.readString();
         }
 
         /**
@@ -108,6 +131,13 @@ public class Point extends Entity {
         public Editor setMarker(String svg) {
             marker = svg;
             return this;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+
+            dest.writeString(marker);
         }
     }
 }

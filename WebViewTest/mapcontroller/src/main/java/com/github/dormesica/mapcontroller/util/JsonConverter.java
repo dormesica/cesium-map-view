@@ -1,9 +1,7 @@
 package com.github.dormesica.mapcontroller.util;
 
 import com.github.dormesica.mapcontroller.layers.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapterFactory;
+import com.google.gson.*;
 
 /**
  * This class holds a singleton instance of Gson used to convert classes from this library.
@@ -33,6 +31,7 @@ public class JsonConverter {
         sConverter = new GsonBuilder()
                 .registerTypeAdapterFactory(entityAdapterFactory)
                 .registerTypeAdapter(Properties.class, new PropertiesTypeAdapter())
+                .registerTypeHierarchyAdapter(Entity.Editor.class, new EntityEditorTypeAdapter())
                 .create();
     }
 

@@ -101,20 +101,30 @@ public abstract class Entity implements Styleable, Parcelable {
      *
      * @since 1.0.0
      */
-    public abstract class Editor extends StyleEditor {
-        private Boolean isVisible;
-        private String color;
-        private double opacity;
+    public static abstract class Editor extends StyleEditor {
+        private Boolean isVisible = null;
+        private String color = null;
+        private double opacity = Double.NaN;
 
         /**
          * Creates a new {@code Entity.Editor} object.
          */
-        protected Editor() {
+        protected Editor(String id) {
             super(id);
+        }
 
-            isVisible = null;
-            String color = null;
-            opacity = -1;
+        /**
+         * Creates a new {@code Editor} from a {@link Parcel}.
+         *
+         * @param source The source Parcel.
+         */
+        protected Editor(Parcel source) {
+            super(source);
+
+            int visibility = source.readInt();
+            isVisible = visibility == -1 ? null : visibility != 0;
+            color = source.readString();
+            opacity = source.readDouble();
         }
 
         /**
@@ -124,7 +134,7 @@ public abstract class Entity implements Styleable, Parcelable {
          * @return The {@code Entity.Editor} for method chaining.
          */
         public Editor setVisibility(boolean visible) {
-            this.isVisible = visible;
+            isVisible = visible;
             return this;
         }
 
@@ -140,11 +150,16 @@ public abstract class Entity implements Styleable, Parcelable {
             return this;
         }
 
-        @Override
-        public void onFinish(boolean success) {
-            if (success) {
-                Entity.this.isVisible = this.isVisible;
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+
+            if (isVisible == null) {
+                dest.writeInt(-1);
+            } else {
+                dest.writeInt(isVisible ? 1 : 0);
             }
+            dest.writeString(color);
+            dest.writeDouble(opacity);
         }
     }
 }

@@ -53,7 +53,7 @@ class LayerManager {
         // TODO cannot be done here
         cesiumLayer.then(({ layer, dataSource }) => {
             this._layers.set(layerId, dataSource);
-            CallbackSync.invoke(callbackId, JSON.stringify({ ...layer, id: layerId }));
+            CallbackSync.invoke(callbackId, JSON.stringify({ ...layer, id: layerId, isVisible: true }));
         });
     }
 

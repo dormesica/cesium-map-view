@@ -2,7 +2,6 @@ package com.github.dormesica.mapcontroller.layers;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.github.dormesica.mapcontroller.StyleEditor;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 import com.google.common.base.Preconditions;
 
@@ -94,8 +93,8 @@ public class Line extends Entity {
     }
 
     @Override
-    public StyleEditor edit() {
-        return new Editor();
+    public Editor edit() {
+        return new Editor(getId());
     }
 
     /**
@@ -103,14 +102,37 @@ public class Line extends Entity {
      *
      * @since 1.0.0
      */
-    public class Editor extends Entity.Editor {
-        private Integer width;
+    public static class Editor extends Entity.Editor {
+        public static final Parcelable.Creator<Editor> CREATOR = new Parcelable.Creator<Editor>() {
+            @Override
+            public Editor createFromParcel(Parcel source) {
+                return new Editor(source);
+            }
+
+            @Override
+            public Editor[] newArray(int size) {
+                return new Editor[0];
+            }
+        };
+
+        private int width = Integer.MIN_VALUE;
 
         /**
          * Creates a new {@code Line.Editor} object.
          */
-        protected Editor() {
-            super();
+        protected Editor(String id) {
+            super(id);
+        }
+
+        /**
+         * Creates a new {@code Line.Editor} object from a {@link Parcel}.
+         *
+         * @param source The source Parcel.
+         */
+        protected Editor(Parcel source) {
+            super(source);
+
+            width = source.readInt();
         }
 
         /**
@@ -124,6 +146,13 @@ public class Line extends Entity {
 
             this.width = width;
             return this;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+
+            dest.writeInt(width);
         }
     }
 }

@@ -1,17 +1,18 @@
 package com.github.dormesica.mapcontroller;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
 
 /**
  * A class that describes the changes to a {@link Styleable} object's style that should be made.
  * <p>
- * The object should provide an {@code onFinish} callback, to be invoked when the operation completes.
- * This callback should be used in cases where there are some operations that should be performed after the change to
- * the style has taken place. This callback may include an empty body in case no operation is required after the update.
+ * Classes that inherit from {@code StyleEditor} are serialized into JSON strings using {@code Gson}. Every
+ * implementation of such class should take that into account.
  *
  * @since 1.0.0
  */
-public abstract class StyleEditor {
+public abstract class StyleEditor implements Parcelable {
 
     private String id;
 
@@ -25,10 +26,21 @@ public abstract class StyleEditor {
     }
 
     /**
-     * A callback to be invoked when the style update completes.
-     * {@code success} indicates whether the change has taken place successfully.
+     * Creates a new {@code StyleEditor} from a {@link Parcel}.
      *
-     * @param success {@code true} if the change was successful, otherwise {@code false}.
+     * @param source The source Parcel.
      */
-    public abstract void onFinish(boolean success);
+    protected StyleEditor(Parcel source) {
+        id = source.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+    }
 }
