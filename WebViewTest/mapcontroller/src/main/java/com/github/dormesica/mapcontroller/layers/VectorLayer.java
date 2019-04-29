@@ -38,6 +38,11 @@ public class VectorLayer extends Layer implements Iterable<Entity> { // TODO imp
     private List<Entity> entities;
     private boolean isVisible;
 
+    /**
+     * Creates a new {@code VectorLayer} from a {@link Parcel}.
+     *
+     * @param source The source Parcel.
+     */
     private VectorLayer(Parcel source) {
         super(source);
 

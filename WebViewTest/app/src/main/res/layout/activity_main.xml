@@ -13,8 +13,9 @@
         android:layout_gravity="top"
         tools:text="test" />
 
-    <com.github.dormesica.mapcontroller.MapView
-        android:id="@+id/cesium_map_view"
+    <fragment
+        android:id="@+id/fragment_map"
+        class="com.github.dormesica.mapcontroller.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
