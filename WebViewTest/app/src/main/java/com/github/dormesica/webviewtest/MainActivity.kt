@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             mapView.load(geoJson) {
                 it.name = "שכבה מדומת"
-                it.description = "שכבה המתארת מבנים בשכונת נוה הדרים בראשון לציון בה גר דור מסיקה המלך"
+                it.description = "שכבה המתארת מבנים בשכונת נוה הדרים בראשון לציון"
                 layersList.add(it)
             }
         }

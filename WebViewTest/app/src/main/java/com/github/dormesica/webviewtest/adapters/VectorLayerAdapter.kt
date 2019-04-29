@@ -3,7 +3,6 @@ package com.github.dormesica.webviewtest.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -13,10 +12,6 @@ import com.github.dormesica.webviewtest.R
 class VectorLayerAdapter(list: List<VectorLayer>): RecyclerView.Adapter<VectorLayerAdapter.ViewHolder>() {
 
     var listener: ((VectorLayer) -> Unit)? = null
-
-    interface ListItemClickListener {
-        fun onListItemClick(clickedLayer: VectorLayer)
-    }
 
     inner class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         private val nameTextView: TextView = itemView.findViewById(R.id.tv_layer_name)
