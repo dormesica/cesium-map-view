@@ -1,22 +1,21 @@
 package com.github.dormesica.webviewtest
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
-import com.github.dormesica.mapcontroller.MapFragment
 import com.github.dormesica.mapcontroller.location.Rectangle
 import com.github.dormesica.mapcontroller.MapView
 import com.github.dormesica.mapcontroller.event.MapClickEvent
 import com.github.dormesica.mapcontroller.event.MapTouchEvent
+import com.github.dormesica.mapcontroller.event.OnMapReadyListener
 import com.github.dormesica.mapcontroller.layers.GeoJsonLayerDescriptor
 import com.github.dormesica.mapcontroller.layers.Layer
 import com.github.dormesica.mapcontroller.location.Coordinates
 
-class MainActivity : FragmentActivity(), MapFragment.OnMapReadyListener {
+class MainActivity : FragmentActivity(), OnMapReadyListener {
 
     private lateinit var mEventDisplayTextView: TextView
     private lateinit var mButton: Button

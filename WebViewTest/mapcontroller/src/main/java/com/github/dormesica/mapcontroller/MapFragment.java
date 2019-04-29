@@ -2,25 +2,46 @@ package com.github.dormesica.mapcontroller;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.github.dormesica.mapcontroller.event.OnMapReadyListener;
 
 /**
  * A fragment subclass that renders {@link MapView} onto the screen.
  * <p>
- * An activity that contains {@code MapFragment} must implement {@link OnMapReadyListener} to be notified when the map
- * id ready to be interacted with.
+ * This component can be added to an activity thought it's layout XML:
+ * <pre>
+ *     &#60;fragment
+ *          class="com.github.dormesica.mapcontroller.MapFragment"
+ *          android:layout_width="match_parent"
+ *          android:layout_height="match_parent" /&#62;
+ * </pre>
+ * or in the activity's code:
+ * <pre>
+ *     FragmentManager manager = getFragmentManager();
+ *     FragmentTransaction transaction = manager.beginTransaction();
+ *
+ *     transaction.add(R.id.containing_view, MapFragment.newInstance());
+ *     transaction.commit();
+ * </pre>
+ * <p>
+ * An activity that contains {@code MapFragment} can either implement {@link OnMapReadyListener} to be notified when
+ * the map is ready to be interacted with, or it can register a mListener using the
+ * {@link #setOnMapReadyListener(OnMapReadyListener)} method. Providing such a listener is the only way to gain access
+ * to the {@link MapView} instance and have it change later on in the application.
  *
  * @since 1.0.0
  */
 public class MapFragment extends Fragment {
     private static final String ARG_OPTIONS = "options";
+    private static final String TAG = "MapFragment";
 
     private MapView mMapView;
-    private OnMapReadyListener listener;
+    private OnMapReadyListener mListener;
 
     public MapFragment() {
         // Required empty public constructor
@@ -54,9 +75,9 @@ public class MapFragment extends Fragment {
         super.onAttach(context);
 
         try {
-            listener = (OnMapReadyListener) context;
+            mListener = (OnMapReadyListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnMapReadyListener");
+            Log.w(TAG, context.toString() + " does not implement OnMapReadyListener");
         }
     }
 
@@ -71,7 +92,9 @@ public class MapFragment extends Fragment {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = layout.findViewById(R.id.map_fragment_map_view);
-        mMapView.setOnMapReadyListener(listener::onMapReady);
+        if (mListener != null) {
+            mMapView.setOnMapReadyListener(mListener);
+        }
 
         return layout;
     }
@@ -79,20 +102,16 @@ public class MapFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
+        mListener = null;
     }
 
     /**
-     * This interface must be implemented by activities the contain the {@link MapFragment} to allow interaction with
-     * the {@link MapView} this fragment contains and to allow interaction to be communicated to the activity and other
-     * fragments contained in the activity.
+     * Registers a callback to be invoked when the map is ready and can be interacted with.
+     *
+     * @param listener The callback that will run.
      */
-    public interface OnMapReadyListener {
-        /**
-         * Called when the map view has been initialized and is ready to be interacted with.
-         *
-         * @param map The map view
-         */
-        void onMapReady(@NonNull MapView map);
+    public void setOnMapReadyListener(@NonNull OnMapReadyListener listener) {
+        mListener = listener;
+        mMapView.setOnMapReadyListener(mListener);
     }
 }
