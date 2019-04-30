@@ -1,8 +1,8 @@
 import LayerManager from './LayerManager';
 import MapError from '../utils/MapError';
-import { mapRadianLocationToDegrees } from '../utils/math';
+import { createEntityDescriptor } from '../utils/cesium';
 
-const SCALING_DEFINIIONS = new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.5);
+const SCALING_DEFINITIONS = new Cesium.NearFarScalar(1.5e2, 1.0, 1.5e7, 0.5);
 
 /**
  * @typedef GeoJsonLayer
@@ -72,58 +72,10 @@ class VectorLayerManager extends LayerManager {
             })
             .then(dataSource => ({
                 dataSource,
-                groupsEntities: {
-                    points: dataSource.entities.values.filter(element => element.billboard),
-                    lines: dataSource.entities.values.filter(element => element.polyline),
-                    polygons: dataSource.entities.values.filter(element => element.polygon),
+                layer: {
+                    entities: dataSource.entities.values.map(createEntityDescriptor),
                 },
-            }))
-            .then(({ dataSource, groupsEntities }) => {
-                const layer = {
-                    entities: [],
-                };
-
-                groupsEntities.points.forEach(point =>
-                    layer.entities.push({
-                        type: 'point',
-                        id: point.id,
-                        name: point.name,
-                        isVisible: point.show,
-                        location: mapRadianLocationToDegrees(
-                            Cesium.Cartographic.fromCartesian(point.position.getValue())
-                        ),
-                        properties: point.properties.getValue(),
-                    })
-                );
-                groupsEntities.lines.forEach(line =>
-                    layer.entities.push({
-                        type: 'line',
-                        id: line.id,
-                        name: line.name,
-                        isVisible: line.show,
-                        path: line.polyline.positions
-                            .getValue()
-                            .map(pos => Cesium.Cartographic.fromCartesian(pos))
-                            .map(mapRadianLocationToDegrees),
-                        properties: line.properties.getValue(),
-                    })
-                );
-                groupsEntities.polygons.forEach(polygon =>
-                    layer.entities.push({
-                        type: 'polygon',
-                        id: polygon.id,
-                        name: polygon.name,
-                        isVisible: polygon.show,
-                        perimeter: polygon.polygon.hierarchy
-                            .getValue()
-                            .positions.map(pos => Cesium.Cartographic.fromCartesian(pos))
-                            .map(mapRadianLocationToDegrees),
-                        properties: polygon.properties.getValue()
-                    })
-                );
-
-                return { layer, dataSource };
-            });
+            }));
     }
 }
 
@@ -135,7 +87,7 @@ function handleStyle(element, options) {
     if (element.billboard) {
         element.billboard.image = options.pointIcon;
         element.billboard.heightReference = Cesium.HeightReference.RELATIVE_TO_GROUND;
-        element.billboard.scaleByDistance = SCALING_DEFINIIONS;
+        element.billboard.scaleByDistance = SCALING_DEFINITIONS;
     } else if (element.polyline) {
     } else if (element.polygon) {
     }

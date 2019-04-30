@@ -46,7 +46,6 @@ public class MapView extends FrameLayout {
      * The layer manager name of the JavaScript map component
      */
     private static final String JS_VECTOR_LAYER_MANAGER = "vectorLayerManager";
-
     /**
      * Script format for focusOn operations
      */
@@ -67,12 +66,14 @@ public class MapView extends FrameLayout {
      */
     private static final String TAG_MAP_VIEW_EVENT = "CesiumMapView.Event";
 
+    /**
+     * Converter for converting between POJOs and JSON.
+     */
+    private final static Gson sJsonConverter = JsonConverter.getConverter();
+
     // properties
     private final WebView mWebView;
-
-    private final Gson mGson;
     private final Handler mHandler;
-
     private boolean mIsInitialized;
 
     // Event listeners
@@ -91,7 +92,6 @@ public class MapView extends FrameLayout {
     public MapView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mGson = JsonConverter.getConverter();
         mHandler = new Handler();
 
         inflate(context, R.layout.cesium_map_view, this);
@@ -183,7 +183,7 @@ public class MapView extends FrameLayout {
      * @param location The coordinates on which to focus.
      */
     public void focusOn(@NonNull Coordinates location) {
-        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, mGson.toJson(location)), null);
+        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, sJsonConverter.toJson(location)), null);
     }
 
     /**
@@ -192,7 +192,7 @@ public class MapView extends FrameLayout {
      * @param extent The extent on which to focus
      */
     public void focusOn(@NonNull Rectangle extent) {
-        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, mGson.toJson(extent)), null);
+        mWebView.evaluateJavascript(String.format(SCRIPT_FOCUS_ON, sJsonConverter.toJson(extent)), null);
     }
 
     /**
@@ -223,7 +223,7 @@ public class MapView extends FrameLayout {
         String script = String.format("%s.getViewExtent();", JS_MAP_NAME);
 
         mWebView.evaluateJavascript(script,
-                (String result) -> callback.onReceiveValue(mGson.fromJson(result, Rectangle.class)));
+                (String result) -> callback.onReceiveValue(sJsonConverter.fromJson(result, Rectangle.class)));
     }
 
     /**
@@ -238,8 +238,8 @@ public class MapView extends FrameLayout {
      */
     public void load(@NonNull GeoJsonLayerDescriptor layer, @NonNull ValueCallback<VectorLayer> callback) {
         String callbackId = CallbackSync.getInstance().register((String layerJsonString) ->
-                callback.onReceiveValue(mGson.fromJson(layerJsonString, VectorLayer.class)));
-        String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, mGson.toJson(layer), callbackId);
+                callback.onReceiveValue(sJsonConverter.fromJson(layerJsonString, VectorLayer.class)));
+        String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, sJsonConverter.toJson(layer), callbackId);
 
         mWebView.evaluateJavascript(script, null);
     }
@@ -248,7 +248,7 @@ public class MapView extends FrameLayout {
      * Asynchronously removes a layer from the map. <code>callback</code> is invoked when the operation completes
      * with a boolean value that indicates whether the operation succeeded or not.
      *
-     * @param layer  The ID of the layer to be removed.
+     * @param layer    The ID of the layer to be removed.
      * @param callback Called when the layer is removed or upon failure.
      */
     public void remove(@NonNull Layer layer, ValueCallback<Boolean> callback) {
@@ -312,7 +312,7 @@ public class MapView extends FrameLayout {
 
             if (mOnMapClickListener != null) {
                 mHandler.post(() -> mOnMapClickListener.onClick(
-                        MapView.this, mGson.fromJson(eventDataString, MapClickEvent.class)));
+                        MapView.this, sJsonConverter.fromJson(eventDataString, MapClickEvent.class)));
             }
         }
 
@@ -322,7 +322,7 @@ public class MapView extends FrameLayout {
 
             if (mOnMapLongClickListener != null) {
                 mHandler.post(() -> mOnMapLongClickListener.onLongClick(
-                        MapView.this, mGson.fromJson(eventDataString, MapClickEvent.class)));
+                        MapView.this, sJsonConverter.fromJson(eventDataString, MapClickEvent.class)));
             }
         }
 
@@ -332,7 +332,7 @@ public class MapView extends FrameLayout {
 
             if (mOnMapDragListener != null) {
                 mHandler.post(() -> mOnMapDragListener.onDrag(
-                        MapView.this, mGson.fromJson(eventDataString, MapDragEvent.class)));
+                        MapView.this, sJsonConverter.fromJson(eventDataString, MapDragEvent.class)));
             }
         }
 
@@ -342,7 +342,7 @@ public class MapView extends FrameLayout {
 
             if (mOnMapTouchListener != null) {
                 mHandler.post(() -> mOnMapTouchListener.onTouch(
-                        MapView.this, mGson.fromJson(eventDataString, MapTouchEvent.class)));
+                        MapView.this, sJsonConverter.fromJson(eventDataString, MapTouchEvent.class)));
             }
         }
     }

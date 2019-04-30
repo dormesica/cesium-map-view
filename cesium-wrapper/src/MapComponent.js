@@ -1,6 +1,7 @@
 import { areCoordiantesValid, hasValue } from './utils/validation';
 import MapError from './utils/MapError';
 import { convertRadiansToDegrees } from './utils/math';
+import { createEntityDescriptor } from './utils/cesium';
 import EventsHandler from './EventsHandler';
 import VectorLayerManager from './managers/VectorLayerManager';
 
@@ -155,6 +156,15 @@ export default class MapComponent {
         } else if (entity.polygon) {
             this._changePolygonStyle(entity, options);
         }
+    }
+
+    /**
+     * Returns a list of the entity descriptors for the entities that lie under the given location.
+     * @param {Coordinates} position The window position underwhich to look for features.
+     * @return {Array<String>} list of entity descriptors.
+     */
+    getFeatures(position) {
+        return this._viewer.scene.drillPick(position).map(primitive => createEntityDescriptor(primitive.id));
     }
 
     _changePointStyle(point, options) {
