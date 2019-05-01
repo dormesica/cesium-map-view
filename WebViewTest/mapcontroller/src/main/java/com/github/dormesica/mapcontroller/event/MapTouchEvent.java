@@ -7,7 +7,7 @@ import com.github.dormesica.mapcontroller.location.Coordinates;
  *
  * @since 1.0.0
  */
-public class MapTouchEvent {
+public class MapTouchEvent extends StaticMapEvent {
 
     /** Constant that indicates a press gesture has started. */
     public static final int ACTION_DOWN = 0;

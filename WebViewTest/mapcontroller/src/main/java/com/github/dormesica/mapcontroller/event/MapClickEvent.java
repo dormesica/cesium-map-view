@@ -7,7 +7,7 @@ import com.github.dormesica.mapcontroller.location.Coordinates;
  *
  * @since 1.0.0
  */
-public class MapClickEvent {
+public class MapClickEvent extends StaticMapEvent {
 
     private Coordinates location;
 
