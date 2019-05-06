@@ -17,18 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Entity Name" />
 
-    <!-- TODO icon button for editing -->
-    <Button
-        android:id="@+id/bt_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="Edit"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
         android:id="@+id/separator"
         android:layout_width="0dp"
@@ -38,9 +26,9 @@
         android:layout_marginTop="16dp"
         android:background="@color/dark_grey"
         android:contentDescription="@string/separator_content_description"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bt_edit" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_entity_name" />
 
     <TextView
         android:id="@+id/tv_entity_description"
@@ -52,5 +40,21 @@
         app:layout_constraintEnd_toEndOf="@id/separator"
         app:layout_constraintTop_toBottomOf="@id/separator"
         tools:text="This text is just an example of possibly a multiline description text" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/bt_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/edit_button_label"
+        android:textAppearance="@color/colorPrimary"
+        android:textSize="16sp"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton.Icon"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:icon="@drawable/ic_baseline_edit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_entity_description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

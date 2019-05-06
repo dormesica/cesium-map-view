@@ -13,4 +13,5 @@
     <string name="nav_maps_list_title">Maps</string>
 
     <string name="separator_content_description">Separating line</string>
+    <string name="edit_button_label">EDIT</string>
 </resources>

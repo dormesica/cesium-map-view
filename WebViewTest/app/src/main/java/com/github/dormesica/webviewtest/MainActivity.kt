@@ -16,7 +16,7 @@ import com.github.dormesica.mapcontroller.layers.VectorLayer
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : FragmentActivity(), NavigationView.OnNavigationItemSelectedListener, OnMapReadyListener,
-    EntityDetailFragment.Companion.OnEntityStyleEditedListener{
+    EntityDetailFragment.Companion.OnEntityStyleEditedListener {
 
     private val layersList: ArrayList<VectorLayer> = ArrayList()
 

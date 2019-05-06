@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import com.github.dormesica.mapcontroller.layers.Entity
+import com.google.android.material.button.MaterialButton
 import java.lang.ClassCastException
 import java.lang.Exception
 
@@ -62,7 +63,7 @@ class EntityDetailFragment : Fragment() {
         view.findViewById<TextView>(R.id.tv_entity_name).text = mEntity.name
         view.findViewById<TextView>(R.id.tv_entity_description).text = mEntity.description
 
-        view.findViewById<Button>(R.id.bt_edit).setOnClickListener {
+        view.findViewById<MaterialButton>(R.id.bt_edit).setOnClickListener {
             Log.d("EntityDetailFragment", "Edit clicked") // TODO start edit activity
         }
 
