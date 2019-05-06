@@ -8,6 +8,7 @@ import android.util.Log;
 import android.webkit.*;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.github.dormesica.mapcontroller.layers.*;
 import com.github.dormesica.mapcontroller.location.Coordinates;
 import com.github.dormesica.mapcontroller.location.Rectangle;
@@ -15,6 +16,9 @@ import com.github.dormesica.mapcontroller.event.*;
 import com.github.dormesica.mapcontroller.util.CallbackSync;
 import com.github.dormesica.mapcontroller.util.JsonConverter;
 import com.google.gson.Gson;
+
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * A view which displays a 3D map.
@@ -75,6 +79,7 @@ public class MapView extends FrameLayout {
     private final WebView mWebView;
     private final Handler mHandler;
     private boolean mIsInitialized;
+    private HashMap<String, Entity> mEntities;
 
     // Event listeners
     private OnMapReadyListener mOnMapReadyListener = null;
@@ -96,8 +101,9 @@ public class MapView extends FrameLayout {
 
         inflate(context, R.layout.cesium_map_view, this);
         mWebView = findViewById(R.id.web_view);
-
         setUpMap();
+
+        mEntities = new HashMap<>();
     }
 
     /**
@@ -171,7 +177,7 @@ public class MapView extends FrameLayout {
      *
      * @param listener The callback that will run.
      */
-    public void setOnMapTouchListener(@NonNull OnMapTouchListener listener) {
+    public void setOnMapTouchListener(OnMapTouchListener listener) {
         mOnMapTouchListener = listener;
     }
 
@@ -233,13 +239,17 @@ public class MapView extends FrameLayout {
      * <p>
      * The layer ID should be used in future manipulations on the layer.
      *
-     * @param layer    The layer to be loaded
-     * @param callback a callback to be invoked with the layer ID when the operation completes.
+     * @param layerDescriptor The layer to be loaded
+     * @param callback        a callback to be invoked with the layer ID when the operation completes.
      */
-    public void load(@NonNull GeoJsonLayerDescriptor layer, @NonNull ValueCallback<VectorLayer> callback) {
-        String callbackId = CallbackSync.getInstance().register((String layerJsonString) ->
-                callback.onReceiveValue(sJsonConverter.fromJson(layerJsonString, VectorLayer.class)));
-        String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER, sJsonConverter.toJson(layer), callbackId);
+    public void load(@NonNull GeoJsonLayerDescriptor layerDescriptor, @NonNull ValueCallback<VectorLayer> callback) {
+        String callbackId = CallbackSync.getInstance().register(layerJsonString -> {
+            VectorLayer layer = sJsonConverter.fromJson(layerJsonString, VectorLayer.class);
+            layer.forEach(entity -> mEntities.put(entity.getId(), entity));
+            callback.onReceiveValue(layer);
+        });
+        String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER,
+                sJsonConverter.toJson(layerDescriptor), callbackId);
 
         mWebView.evaluateJavascript(script, null);
     }
@@ -253,10 +263,27 @@ public class MapView extends FrameLayout {
      */
     public void remove(@NonNull Layer layer, ValueCallback<Boolean> callback) {
         String callbackId = CallbackSync.getInstance()
-                .register((String result) -> callback.onReceiveValue(result.equals("true")));
+                .register(result -> {
+                    boolean isSuccessful = result.equals("true");
+                    if (isSuccessful && layer instanceof VectorLayer) {
+                        ((VectorLayer) layer).forEach(entity -> mEntities.remove(entity.getId()));
+                    }
+                    callback.onReceiveValue(isSuccessful);
+                });
         String script = String.format(SCRIPT_REMOVE_LAYER, JS_VECTOR_LAYER_MANAGER, layer.getId(), callbackId);
 
         mWebView.evaluateJavascript(script, null);
+    }
+
+    /**
+     * Returns the entity associated with the given ID.
+     *
+     * @param id The ID of the entity.
+     * @return The entity with the given ID.
+     */
+    @Nullable
+    public Entity getEntity(String id) {
+        return mEntities.get(id);
     }
 
     /**
@@ -311,8 +338,8 @@ public class MapView extends FrameLayout {
             Log.d(TAG_MAP_VIEW_EVENT, "CLICK");
 
             if (mOnMapClickListener != null) {
-                mHandler.post(() -> mOnMapClickListener.onClick(
-                        MapView.this, sJsonConverter.fromJson(eventDataString, MapClickEvent.class)));
+                mHandler.post(() ->
+                    mOnMapClickListener.onClick(MapView.this, createEventFromDescriptor(eventDataString)));
             }
         }
 
@@ -322,7 +349,7 @@ public class MapView extends FrameLayout {
 
             if (mOnMapLongClickListener != null) {
                 mHandler.post(() -> mOnMapLongClickListener.onLongClick(
-                        MapView.this, sJsonConverter.fromJson(eventDataString, MapClickEvent.class)));
+                        MapView.this, createEventFromDescriptor(eventDataString)));
             }
         }
 
@@ -341,9 +368,25 @@ public class MapView extends FrameLayout {
             Log.d(TAG_MAP_VIEW_EVENT, "TOUCH");
 
             if (mOnMapTouchListener != null) {
-                mHandler.post(() -> mOnMapTouchListener.onTouch(
-                        MapView.this, sJsonConverter.fromJson(eventDataString, MapTouchEvent.class)));
+                mHandler.post(() -> {
+                    MapTouchDescriptor descriptor = sJsonConverter.fromJson(eventDataString, MapTouchDescriptor.class);
+                    Entity[] entities = Arrays.stream(descriptor.entityIds)
+                            .map(id -> mEntities.get(id))
+                            .toArray(Entity[]::new);
+                    mOnMapTouchListener.onTouch(
+                            MapView.this, new MapTouchEvent(descriptor.type, descriptor.location, entities));
+                });
             }
+        }
+
+        private MapClickEvent createEventFromDescriptor(String descriptor) {
+            MapClickDescriptor eventDescriptor =
+                    sJsonConverter.fromJson(descriptor, MapClickDescriptor.class);
+            Entity[] entities = Arrays.stream(eventDescriptor.entityIds)
+                    .map(id -> mEntities.get(id))
+                    .toArray(Entity[]::new);
+
+            return new MapClickEvent(eventDescriptor.location, entities);
         }
     }
 }

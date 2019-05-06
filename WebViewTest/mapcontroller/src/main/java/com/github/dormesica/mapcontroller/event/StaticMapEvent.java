@@ -9,7 +9,16 @@ import com.github.dormesica.mapcontroller.layers.Entity;
  */
 public abstract class StaticMapEvent {
 
-    private Entity[] entities;
+    private Entity[] mEntities;
+
+    /**
+     * Initializes a new {@link StaticMapEvent} object.
+     *
+     * @param entities The entities that were clicked.
+     */
+    protected StaticMapEvent(Entity[] entities) {
+        mEntities = entities;
+    }
 
     /**
      * Returns the amount of entities clicked in the event.
@@ -17,7 +26,7 @@ public abstract class StaticMapEvent {
      * @return The amount of entities clicked.
      */
     public int entitiesAmount() {
-        return entities != null ? entities.length : 0;
+        return mEntities != null ? mEntities.length : 0;
     }
 
     /**
@@ -28,10 +37,10 @@ public abstract class StaticMapEvent {
      * @throws IndexOutOfBoundsException If {@code i < 0} or {@code i >= entitiesAmount}.
      */
     public Entity entity(int i) throws IndexOutOfBoundsException {
-        if (entities == null || i < 0 || i >= entities.length) {
+        if (mEntities == null || i < 0 || i >= mEntities.length) {
             throw new IndexOutOfBoundsException();
         }
 
-        return entities[i];
+        return mEntities[i];
     }
 }

@@ -17,6 +17,7 @@ public abstract class Entity implements Styleable, Parcelable {
 
     private String id;
     private String name;
+    private String description;
     private boolean isVisible;
     private Properties properties;
 
@@ -63,6 +64,24 @@ public abstract class Entity implements Styleable, Parcelable {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Returns the description of the entity.
+     *
+     * @return The description of the entity.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets a description for the entity.
+     *
+     * @param description The description for the entity.
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     /**

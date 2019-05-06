@@ -77,7 +77,7 @@ public class MapFragment extends Fragment {
         try {
             mListener = (OnMapReadyListener) context;
         } catch (ClassCastException e) {
-            Log.w(TAG, context.toString() + " does not implement OnMapReadyListener");
+            Log.w(TAG, context.toString() + " does not implement OnMapReadyListener. Listener is missing.");
         }
     }
 

@@ -1,5 +1,4 @@
 import { zip, upperCase } from 'lodash';
-import { EventEmitter } from 'events';
 
 /**
  * @typedef {Object} Pixel
@@ -68,7 +67,7 @@ export default class EventsHandler {
         const data = JSON.stringify({
             location,
             type: touchType.DOWN,
-            entities: this._mapComponent.getFeatures(position),
+            entityIds: this._mapComponent.getFeatures(position).map(feature => feature.id),
         });
 
         EventsEmitter.fireOnTouch(data);
@@ -87,7 +86,7 @@ export default class EventsHandler {
 
         const data = JSON.stringify({
             location,
-            entities: this._mapComponent.getFeatures(position),
+            entityIds: this._mapComponent.getFeatures(position).map(feature => feature.id),
         });
 
         const pressLength = new Date().getTime() - this._lastLeftDownTimeStamp;
@@ -112,7 +111,7 @@ export default class EventsHandler {
         const data = JSON.stringify({
             location,
             type: touchType.UP,
-            entities: this._mapComponent.getFeatures(position)
+            entityIds: this._mapComponent.getFeatures(position).map(feature => feature.id),
         });
 
         EventsEmitter.fireOnTouch(data);
