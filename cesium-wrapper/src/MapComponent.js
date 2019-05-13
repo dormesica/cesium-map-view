@@ -164,7 +164,7 @@ export default class MapComponent {
     _changeEntityStyle(id, options) {
         const entity = this._featuresMap.get(id);
         if (!entity) {
-            return null;
+            return;
         }
 
         if (hasValue(options.isvisible)) {

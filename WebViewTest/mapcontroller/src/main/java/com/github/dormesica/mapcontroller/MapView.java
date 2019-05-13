@@ -16,6 +16,7 @@ import com.github.dormesica.mapcontroller.event.*;
 import com.github.dormesica.mapcontroller.util.CallbackSync;
 import com.github.dormesica.mapcontroller.util.JsonConverter;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 import java.util.Arrays;
 import java.util.HashMap;

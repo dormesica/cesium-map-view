@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.github.dormesica.mapcontroller.MapView
 import com.github.dormesica.mapcontroller.event.OnMapReadyListener
+import com.github.dormesica.mapcontroller.graphics.Color
 import com.github.dormesica.mapcontroller.layers.Entity
 import com.github.dormesica.mapcontroller.layers.GeoJsonLayerDescriptor
 import com.github.dormesica.mapcontroller.layers.VectorLayer
@@ -73,7 +74,8 @@ class MainActivity : FragmentActivity(), NavigationView.OnNavigationItemSelected
                 it.get(1).description = "The route from my house to the bus station."
 
                 val transaction = mapView.entityManager.beginTransaction()
-                transaction.remove(it.get(0))
+                transaction.changeStyle((it.get(0).edit() as Entity.Editor).setColor(Color.RED))
+                transaction.changeStyle((it.get(1).edit() as Entity.Editor).setColor(Color.RED))
                 transaction.commit()
             }
         }

@@ -12,6 +12,8 @@ import com.google.common.base.Preconditions;
  * values of the original object are copied save for the value that was meant to be changed.
  * <p>
  * Each color is represented using 3 integers as defined by the {@code RGB} format and a double value for the opacity.
+ * In addition, each color contains an alpha value that represents the color's opacity, between {@code [0,1]}.
+ * 0 means completely transparent and 1 means completely opaque.
  *
  * @since 1.0.0
  */

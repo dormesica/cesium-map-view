@@ -39,7 +39,7 @@ public class EntityEditorTypeAdapter implements JsonSerializer<Entity.Editor> {
         while (clazz != null) {
             Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {
-                if (Modifier.isStatic(field.getModifiers())) {
+                if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())) {
                     continue;
                 }
 
