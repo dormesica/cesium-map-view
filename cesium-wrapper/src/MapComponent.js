@@ -38,6 +38,9 @@ export default class MapComponent {
         this._vectorLayerManager = new VectorLayerManager(this);
 
         this._featuresMap = new Map();
+
+        this._removeEntity = this._removeEntity.bind(this);
+        this._changeEntityStyle = this._changeEntityStyle.bind(this);
     }
 
     get vectorLayerManager() {
@@ -134,12 +137,31 @@ export default class MapComponent {
         };
     }
 
+    executeEntityTransaction(transaction) {
+        if (transaction.removed) {
+            transaction.removed.forEach(this._removeEntity);
+        }
+
+        if (transaction.editors) {
+            transaction.editors.forEach(editor => this._changeEntityStyle(editor.id, editor));
+        }
+    }
+
+    /**
+     * Returns a list of the entity descriptors for the entities that lie under the given location.
+     * @param {Coordinates} position The window position underwhich to look for features.
+     * @return {Array<String>} list of entity descriptors.
+     */
+    getFeatures(position) {
+        return this._viewer.scene.drillPick(position).map(primitive => createEntityDescriptor(primitive.id));
+    }
+
     /**
      * Changes the style of the entity with the given id.
      * @param {string} id The ID of the entity.
      * @param {*} options The new style of the entity.
      */
-    changeEntityStyle(id, options) {
+    _changeEntityStyle(id, options) {
         const entity = this._featuresMap.get(id);
         if (!entity) {
             return null;
@@ -156,15 +178,6 @@ export default class MapComponent {
         } else if (entity.polygon) {
             this._changePolygonStyle(entity, options);
         }
-    }
-
-    /**
-     * Returns a list of the entity descriptors for the entities that lie under the given location.
-     * @param {Coordinates} position The window position underwhich to look for features.
-     * @return {Array<String>} list of entity descriptors.
-     */
-    getFeatures(position) {
-        return this._viewer.scene.drillPick(position).map(primitive => createEntityDescriptor(primitive.id));
     }
 
     _changePointStyle(point, options) {
@@ -230,6 +243,23 @@ export default class MapComponent {
         }
 
         this._viewer.flyTo(target, options);
+    }
+
+    /**
+     * Removed the entity with the given id from the map.
+     * @param {String} id The ID of the entity to be removed.
+     */
+    _removeEntity(id) {
+        if (!this._featuresMap.has(id)) {
+            return;
+        }
+
+        // if exists as an entity in the view
+        if (this._viewer.entities.removeById(id)) {
+            return;
+        }
+
+        this._vectorLayerManager.removeEntity(id);
     }
 
     /**

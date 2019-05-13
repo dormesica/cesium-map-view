@@ -16,7 +16,7 @@ import com.github.dormesica.mapcontroller.layers.VectorLayer
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : FragmentActivity(), NavigationView.OnNavigationItemSelectedListener, OnMapReadyListener,
-    EntityDetailFragment.Companion.OnEntityStyleEditedListener {
+    EntityDetailFragment.OnEntityStyleEditedListener {
 
     private val layersList: ArrayList<VectorLayer> = ArrayList()
 
@@ -71,6 +71,10 @@ class MainActivity : FragmentActivity(), NavigationView.OnNavigationItemSelected
 
                 it.get(1).name = "Line"
                 it.get(1).description = "The route from my house to the bus station."
+
+                val transaction = mapView.entityManager.beginTransaction()
+                transaction.remove(it.get(0))
+                transaction.commit()
             }
         }
         mapView.setOnMapClickListener { map, data ->

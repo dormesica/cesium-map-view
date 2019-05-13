@@ -20,7 +20,7 @@ private const val ARG_ENTITY = "entity"
 /**
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
- * [EntityDetailFragment.OnFragmentInteractionListener] interface
+ * [EntityDetailFragment.OnEntityStyleEditedListener] interface
  * to handle interaction events.
  * Use the [EntityDetailFragment.newInstance] factory method to
  * create an instance of this fragment.
@@ -70,6 +70,10 @@ class EntityDetailFragment : Fragment() {
         return view
     }
 
+    interface OnEntityStyleEditedListener {
+        fun onEntityStyleChanged(editor: Entity.Editor)
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -85,9 +89,5 @@ class EntityDetailFragment : Fragment() {
                     putParcelable(ARG_ENTITY, entity)
                 }
             }
-
-        interface OnEntityStyleEditedListener {
-            fun onEntityStyleChanged(editor: Entity.Editor)
-        }
     }
 }

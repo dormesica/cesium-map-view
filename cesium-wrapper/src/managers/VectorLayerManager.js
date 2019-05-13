@@ -25,6 +25,19 @@ class VectorLayerManager extends LayerManager {
         this.loadGeoJSON = this.loadGeoJSON.bind(this);
     }
 
+    removeEntity(id) {
+        for (let pair of this._layers) {
+            if (pair[1].entities.removeById(id)) {
+                this._mapComponent._featuresMap.delete(id);
+                if (pair[1].entities.values.length === 0) {
+                    this._mapComponent._viewer.dataSources.remove(pair[1]);
+                    this._layers.delete(pair[0]);
+                }
+                break;
+            }
+        }
+    }
+
     _createLayer(layer) {
         switch (layer.type) {
             case VectorLayerManager.Types.GeoJSON:
@@ -35,9 +48,9 @@ class VectorLayerManager extends LayerManager {
     }
 
     _removeLayer(layer) {
-        layer.dataSource.entities.values.  // TODO test
-            map(element => element.id).
-            forEach(id => mapComponent._featuresMap.delete(id));
+        layer.dataSource.entities.values // TODO test
+            .map(element => element.id)
+            .forEach(id => mapComponent._featuresMap.delete(id));
 
         return this._mapComponent._viewer.dataSources.remove(layer, true);
     }

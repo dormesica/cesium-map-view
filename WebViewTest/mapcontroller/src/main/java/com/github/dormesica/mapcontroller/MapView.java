@@ -64,6 +64,11 @@ public class MapView extends FrameLayout {
      * First string is the layer manger, second is the layer ID, third is the callback ID to invoke.
      */
     private static final String SCRIPT_REMOVE_LAYER = JS_MAP_NAME + ".%s.removeLayer(\"%s\", \"%s\");";
+    /**
+     * Script format for the execution of entity transactions.
+     * The provided string is a representation of the transaction's JSON.
+     */
+    private static final String SCRIPT_EXECUTE_ENTITY_TRANSACTION = JS_MAP_NAME + ".executeEntityTransaction(%s)";
 
     /**
      * Tag for events log from JavaScript.
@@ -79,7 +84,7 @@ public class MapView extends FrameLayout {
     private final WebView mWebView;
     private final Handler mHandler;
     private boolean mIsInitialized;
-    private HashMap<String, Entity> mEntities;
+    private EntityManagerImpl mEntityManager;
 
     // Event listeners
     private OnMapReadyListener mOnMapReadyListener = null;
@@ -103,7 +108,7 @@ public class MapView extends FrameLayout {
         mWebView = findViewById(R.id.web_view);
         setUpMap();
 
-        mEntities = new HashMap<>();
+        mEntityManager = new EntityManagerImpl();
     }
 
     /**
@@ -113,6 +118,10 @@ public class MapView extends FrameLayout {
      */
     public boolean isInitialized() {
         return mIsInitialized;
+    }
+
+    public EntityManager getEntityManager() {
+        return mEntityManager;
     }
 
     /**
@@ -245,7 +254,7 @@ public class MapView extends FrameLayout {
     public void load(@NonNull GeoJsonLayerDescriptor layerDescriptor, @NonNull ValueCallback<VectorLayer> callback) {
         String callbackId = CallbackSync.getInstance().register(layerJsonString -> {
             VectorLayer layer = sJsonConverter.fromJson(layerJsonString, VectorLayer.class);
-            layer.forEach(entity -> mEntities.put(entity.getId(), entity));
+            layer.forEach(mEntityManager::addEntity);
             callback.onReceiveValue(layer);
         });
         String script = String.format(SCRIPT_ADD_LAYER, JS_VECTOR_LAYER_MANAGER,
@@ -266,24 +275,13 @@ public class MapView extends FrameLayout {
                 .register(result -> {
                     boolean isSuccessful = result.equals("true");
                     if (isSuccessful && layer instanceof VectorLayer) {
-                        ((VectorLayer) layer).forEach(entity -> mEntities.remove(entity.getId()));
+                        ((VectorLayer) layer).forEach(mEntityManager::removeEntity);
                     }
                     callback.onReceiveValue(isSuccessful);
                 });
         String script = String.format(SCRIPT_REMOVE_LAYER, JS_VECTOR_LAYER_MANAGER, layer.getId(), callbackId);
 
         mWebView.evaluateJavascript(script, null);
-    }
-
-    /**
-     * Returns the entity associated with the given ID.
-     *
-     * @param id The ID of the entity.
-     * @return The entity with the given ID.
-     */
-    @Nullable
-    public Entity getEntity(String id) {
-        return mEntities.get(id);
     }
 
     /**
@@ -371,7 +369,7 @@ public class MapView extends FrameLayout {
                 mHandler.post(() -> {
                     MapTouchDescriptor descriptor = sJsonConverter.fromJson(eventDataString, MapTouchDescriptor.class);
                     Entity[] entities = Arrays.stream(descriptor.entityIds)
-                            .map(id -> mEntities.get(id))
+                            .map(mEntityManager::getEntityById)
                             .toArray(Entity[]::new);
                     mOnMapTouchListener.onTouch(
                             MapView.this, new MapTouchEvent(descriptor.type, descriptor.location, entities));
@@ -379,14 +377,32 @@ public class MapView extends FrameLayout {
             }
         }
 
+        @NonNull
         private MapClickEvent createEventFromDescriptor(String descriptor) {
             MapClickDescriptor eventDescriptor =
                     sJsonConverter.fromJson(descriptor, MapClickDescriptor.class);
             Entity[] entities = Arrays.stream(eventDescriptor.entityIds)
-                    .map(id -> mEntities.get(id))
+                    .map(mEntityManager::getEntityById)
                     .toArray(Entity[]::new);
 
             return new MapClickEvent(eventDescriptor.location, entities);
+        }
+    }
+
+    private class EntityManagerImpl extends EntityManager {
+        @Override
+        protected void commitTransaction(@NonNull EntityTransaction transaction,
+                                         @Nullable ValueCallback<TransactionResult> callback) {
+            String script = String.format(SCRIPT_EXECUTE_ENTITY_TRANSACTION, sJsonConverter.toJson(transaction));
+            mHandler.post(() -> mWebView.evaluateJavascript(script, null));  // TODO receive callback?
+        }
+
+        void addEntity(@NonNull Entity entity) {
+            mEntities.put(entity.getId(), entity);
+        }
+
+        void removeEntity(@NonNull Entity entity) {
+            mEntities.remove(entity.getId());
         }
     }
 }
