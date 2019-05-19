@@ -139,11 +139,11 @@ export default class MapComponent {
 
     executeEntityTransaction(transaction) {
         if (transaction.removed) {
-            transaction.removed.forEach(this._removeEntity);
+            transaction.removed.forEach(id => setTimeout(() => this._removeEntity(id), 0));
         }
 
         if (transaction.editors) {
-            transaction.editors.forEach(editor => this._changeEntityStyle(editor.id, editor));
+            transaction.editors.forEach(editor => setTimeout(() => this._changeEntityStyle(editor.id, editor), 0));
         }
     }
 

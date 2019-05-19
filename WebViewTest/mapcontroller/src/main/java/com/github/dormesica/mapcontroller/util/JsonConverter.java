@@ -1,5 +1,7 @@
 package com.github.dormesica.mapcontroller.util;
 
+import android.os.AsyncTask;
+import android.webkit.ValueCallback;
 import com.github.dormesica.mapcontroller.layers.*;
 import com.google.gson.*;
 
@@ -42,5 +44,29 @@ public class JsonConverter {
      */
     public static Gson getConverter() {
         return sConverter;
+    }
+
+    public static void convertInBackground(Object object, ValueCallback<String> onConversionFinished) {
+        ConversionTask conversionTask = new ConversionTask(onConversionFinished);
+        conversionTask.execute(object);
+    }
+
+    private static class ConversionTask extends AsyncTask<Object, Void, String> {
+        private ValueCallback<String> mOnConversionFinished;
+
+        ConversionTask(ValueCallback<String> onConversionFinished) {
+            mOnConversionFinished = onConversionFinished;
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+            return JsonConverter.getConverter().toJson(objects[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            mOnConversionFinished.onReceiveValue(s);
+        }
     }
 }
