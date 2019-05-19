@@ -46,11 +46,26 @@ public class JsonConverter {
         return sConverter;
     }
 
+    /**
+     * Converts the object into a GeoJSON string in a background thread.
+     * When finished {@code onConversionFinished} is called with the GeoJSON string as it's parameter.
+     *
+     * @param object The object to convert
+     * @param onConversionFinished Called when conversion is finished.
+     */
     public static void convertInBackground(Object object, ValueCallback<String> onConversionFinished) {
         ConversionTask conversionTask = new ConversionTask(onConversionFinished);
         conversionTask.execute(object);
     }
 
+    /**
+     * An async task that converts java objects to GeoJSON strings.
+     *
+     * An instance of {@code ConversionTask} must be initialized with a callback that will be called with the result of
+     * the conversion when finished.
+     *
+     * @since 1.0.0
+     */
     private static class ConversionTask extends AsyncTask<Object, Void, String> {
         private ValueCallback<String> mOnConversionFinished;
 

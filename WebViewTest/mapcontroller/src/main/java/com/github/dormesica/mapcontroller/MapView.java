@@ -16,10 +16,8 @@ import com.github.dormesica.mapcontroller.event.*;
 import com.github.dormesica.mapcontroller.util.CallbackSync;
 import com.github.dormesica.mapcontroller.util.JsonConverter;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * A view which displays a 3D map.
@@ -338,7 +336,7 @@ public class MapView extends FrameLayout {
 
             if (mOnMapClickListener != null) {
                 mHandler.post(() ->
-                    mOnMapClickListener.onClick(MapView.this, createEventFromDescriptor(eventDataString)));
+                        mOnMapClickListener.onClick(MapView.this, createEventFromDescriptor(eventDataString)));
             }
         }
 
@@ -394,8 +392,10 @@ public class MapView extends FrameLayout {
         @Override
         protected void commitTransaction(@NonNull EntityTransaction transaction,
                                          @Nullable ValueCallback<TransactionResult> callback) {
-            String script = String.format(SCRIPT_EXECUTE_ENTITY_TRANSACTION, sJsonConverter.toJson(transaction));
-            mHandler.post(() -> mWebView.evaluateJavascript(script, null));  // TODO receive callback?
+            JsonConverter.convertInBackground(transaction, json -> mHandler.post(() -> {
+                String script = String.format(SCRIPT_EXECUTE_ENTITY_TRANSACTION, json);
+                mWebView.evaluateJavascript(script, null);  // TODO receive callback?
+            }));
         }
 
         void addEntity(@NonNull Entity entity) {
